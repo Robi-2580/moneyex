@@ -11,6 +11,7 @@ export interface Wallet {
 export interface Category {
   id: string;
   name: string;
+  nameBn?: string;
   type: 'income' | 'expense';
   icon: string;
   color: string;
@@ -30,10 +31,23 @@ export interface Transaction {
 
 export interface Budget {
   id: string;
-  categoryId: string | null; // null = overall monthly budget
+  categoryId: string | null;
   amount: number;
-  month: string; // YYYY-MM
+  month: string;
   spent: number;
+}
+
+export interface Loan {
+  id: string;
+  type: 'payable' | 'receivable' | 'loan'; // পাওনা, দেনা, লোন
+  personName: string;
+  amount: number;
+  paidAmount: number;
+  note: string;
+  date: string;
+  dueDate?: string;
+  status: 'active' | 'settled';
+  createdAt: string;
 }
 
 export interface User {
@@ -42,3 +56,5 @@ export interface User {
   displayName: string;
   photoURL?: string;
 }
+
+export type Language = 'bn' | 'en';

@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import { Wallet, Category, Transaction, Budget } from '@/types';
-import { DEFAULT_CATEGORIES, DEFAULT_WALLETS } from '@/data/defaults';
+import { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
+import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS } from '@/data/defaults';
 
 interface AppState {
   wallets: Wallet[];
   categories: Category[];
   transactions: Transaction[];
   budgets: Budget[];
+  loans: Loan[];
   isDark: boolean;
+  language: Language;
 }
 
 type Action =
@@ -24,14 +26,20 @@ type Action =
   | { type: 'ADD_BUDGET'; payload: Budget }
   | { type: 'UPDATE_BUDGET'; payload: Budget }
   | { type: 'DELETE_BUDGET'; payload: string }
-  | { type: 'TOGGLE_THEME' };
+  | { type: 'ADD_LOAN'; payload: Loan }
+  | { type: 'UPDATE_LOAN'; payload: Loan }
+  | { type: 'DELETE_LOAN'; payload: string }
+  | { type: 'TOGGLE_THEME' }
+  | { type: 'SET_LANGUAGE'; payload: Language };
 
 const initialState: AppState = {
   wallets: DEFAULT_WALLETS,
   categories: DEFAULT_CATEGORIES,
   transactions: [],
   budgets: [],
+  loans: [],
   isDark: false,
+  language: 'bn',
 };
 
 function reducer(state: AppState, action: Action): AppState {
@@ -62,14 +70,12 @@ function reducer(state: AppState, action: Action): AppState {
     }
     case 'UPDATE_TRANSACTION': {
       const { old: oldT, new: newT } = action.payload;
-      // Reverse old transaction effect
       let wallets = state.wallets.map(w => {
         if (w.id === oldT.walletId) {
           return { ...w, balance: oldT.type === 'income' ? w.balance - oldT.amount : w.balance + oldT.amount };
         }
         return w;
       });
-      // Apply new transaction effect
       wallets = wallets.map(w => {
         if (w.id === newT.walletId) {
           return { ...w, balance: newT.type === 'income' ? w.balance + newT.amount : w.balance - newT.amount };
@@ -94,8 +100,16 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, budgets: state.budgets.map(b => b.id === action.payload.id ? action.payload : b) };
     case 'DELETE_BUDGET':
       return { ...state, budgets: state.budgets.filter(b => b.id !== action.payload) };
+    case 'ADD_LOAN':
+      return { ...state, loans: [...state.loans, action.payload] };
+    case 'UPDATE_LOAN':
+      return { ...state, loans: state.loans.map(l => l.id === action.payload.id ? action.payload : l) };
+    case 'DELETE_LOAN':
+      return { ...state, loans: state.loans.filter(l => l.id !== action.payload) };
     case 'TOGGLE_THEME':
       return { ...state, isDark: !state.isDark };
+    case 'SET_LANGUAGE':
+      return { ...state, language: action.payload };
     default:
       return state;
   }
@@ -109,6 +123,8 @@ interface AppContextType {
   totalExpense: number;
   getCategory: (id: string) => Category | undefined;
   getWallet: (id: string) => Wallet | undefined;
+  t: (key: keyof typeof LABELS['bn']) => string;
+  catName: (cat: Category) => string;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -116,7 +132,6 @@ const AppContext = createContext<AppContextType | null>(null);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Load from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem('money-manager-data');
@@ -129,7 +144,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save to localStorage
   useEffect(() => {
     try {
       localStorage.setItem('money-manager-data', JSON.stringify(state));
@@ -138,13 +152,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state]);
 
-  // Theme
   useEffect(() => {
     document.documentElement.classList.toggle('dark', state.isDark);
   }, [state.isDark]);
 
   const totalBalance = state.wallets.reduce((sum, w) => sum + w.balance, 0);
-
   const currentMonth = new Date().toISOString().slice(0, 7);
   const monthTransactions = state.transactions.filter(t => t.date.startsWith(currentMonth));
   const totalIncome = monthTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
@@ -153,8 +165,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const getCategory = useCallback((id: string) => state.categories.find(c => c.id === id), [state.categories]);
   const getWallet = useCallback((id: string) => state.wallets.find(w => w.id === id), [state.wallets]);
 
+  const t = useCallback((key: keyof typeof LABELS['bn']) => {
+    return LABELS[state.language]?.[key] || LABELS['bn'][key] || key;
+  }, [state.language]);
+
+  const catName = useCallback((cat: Category) => {
+    return state.language === 'bn' && cat.nameBn ? cat.nameBn : cat.name;
+  }, [state.language]);
+
   return (
-    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet }}>
+    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName }}>
       {children}
     </AppContext.Provider>
   );
