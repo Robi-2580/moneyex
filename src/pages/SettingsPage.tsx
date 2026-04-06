@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Target, Download, Upload, Trash2 } from 'lucide-react';
+import { Tag, Target, Download, Upload, Trash2, Globe } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export default function SettingsPage() {
-  const { state, dispatch } = useApp();
+  const { state, dispatch, t } = useApp();
   const navigate = useNavigate();
 
   const exportData = () => {
@@ -44,17 +44,22 @@ export default function SettingsPage() {
     }
   };
 
+  const toggleLanguage = () => {
+    dispatch({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
+  };
+
   const menuItems = [
-    { icon: Tag, label: 'Categories', desc: 'Manage income & expense categories', onClick: () => navigate('/categories') },
-    { icon: Target, label: 'Budgets', desc: 'Set monthly spending limits', onClick: () => navigate('/budgets') },
-    { icon: Download, label: 'Export Data', desc: 'Download your data as JSON', onClick: exportData },
-    { icon: Upload, label: 'Import Data', desc: 'Restore from a backup file', onClick: importData },
-    { icon: Trash2, label: 'Clear All Data', desc: 'Delete everything permanently', onClick: clearData, danger: true },
+    { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
+    { icon: Tag, label: t('categories'), desc: 'Manage income & expense categories', onClick: () => navigate('/categories') },
+    { icon: Target, label: t('budgets'), desc: 'Set monthly spending limits', onClick: () => navigate('/budgets') },
+    { icon: Download, label: t('exportData'), desc: 'Download your data as JSON', onClick: exportData },
+    { icon: Upload, label: t('importData'), desc: 'Restore from a backup file', onClick: importData },
+    { icon: Trash2, label: t('clearData'), desc: 'Delete everything permanently', onClick: clearData, danger: true },
   ];
 
   return (
     <div className="py-4 space-y-5">
-      <h2 className="text-xl font-bold">Settings</h2>
+      <h2 className="text-xl font-bold">{t('settings')}</h2>
 
       <div className="space-y-2">
         {menuItems.map((item, i) => (

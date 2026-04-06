@@ -13,6 +13,7 @@ import Budgets from "@/pages/Budgets";
 import Categories from "@/pages/Categories";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
+import Loans from "@/pages/Loans";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ function AppRoutes() {
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/loans" element={<Loans />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

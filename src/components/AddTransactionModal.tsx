@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -8,16 +8,28 @@ interface Props {
   open: boolean;
   onClose: () => void;
   editTransaction?: Transaction | null;
+  prefilledCategoryId?: string;
 }
 
-export function AddTransactionModal({ open, onClose, editTransaction }: Props) {
-  const { state, dispatch } = useApp();
+export function AddTransactionModal({ open, onClose, editTransaction, prefilledCategoryId }: Props) {
+  const { state, dispatch, catName } = useApp();
   const [type, setType] = useState<'expense' | 'income'>(editTransaction?.type || 'expense');
   const [amount, setAmount] = useState(editTransaction?.amount?.toString() || '');
   const [categoryId, setCategoryId] = useState(editTransaction?.categoryId || '');
   const [walletId, setWalletId] = useState(editTransaction?.walletId || state.wallets[0]?.id || '');
   const [note, setNote] = useState(editTransaction?.note || '');
   const [date, setDate] = useState(editTransaction?.date || new Date().toISOString().split('T')[0]);
+
+  // Handle prefilled category
+  useEffect(() => {
+    if (prefilledCategoryId && open) {
+      const cat = state.categories.find(c => c.id === prefilledCategoryId);
+      if (cat) {
+        setCategoryId(prefilledCategoryId);
+        setType(cat.type);
+      }
+    }
+  }, [prefilledCategoryId, open, state.categories]);
 
   const filteredCategories = state.categories.filter(c => c.type === type);
 
@@ -50,6 +62,7 @@ export function AddTransactionModal({ open, onClose, editTransaction }: Props) {
     setCategoryId('');
     setNote('');
     setDate(new Date().toISOString().split('T')[0]);
+    setType('expense');
     onClose();
   };
 
@@ -125,7 +138,7 @@ export function AddTransactionModal({ open, onClose, editTransaction }: Props) {
                     }`}
                   >
                     <span className="text-xl">{cat.icon}</span>
-                    <span className="font-medium truncate w-full text-center">{cat.name}</span>
+                    <span className="font-medium truncate w-full text-center">{catName(cat)}</span>
                   </button>
                 ))}
               </div>
