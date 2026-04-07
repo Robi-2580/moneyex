@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Target, Download, Upload, Trash2, Globe } from 'lucide-react';
+import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { useAuth } from '@/context/AuthContext';
+import { FONTS } from '@/data/defaults';
 
 export default function SettingsPage() {
   const { state, dispatch, t } = useApp();
+  const { user, isGuest } = useAuth();
   const navigate = useNavigate();
 
   const exportData = () => {
@@ -13,7 +16,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `moneyflow-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `finance-control-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -48,6 +51,8 @@ export default function SettingsPage() {
     dispatch({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
   };
 
+  const allFonts = [...FONTS.bn, ...FONTS.en];
+
   const menuItems = [
     { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
     { icon: Tag, label: t('categories'), desc: 'Manage income & expense categories', onClick: () => navigate('/categories') },
@@ -61,6 +66,75 @@ export default function SettingsPage() {
     <div className="py-4 space-y-5">
       <h2 className="text-xl font-bold">{t('settings')}</h2>
 
+      {/* Font Selection */}
+      <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <Type size={20} />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">{t('font')}</p>
+            <p className="text-xs text-muted-foreground">{t('selectFont')}</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground px-1">বাংলা ফন্ট</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {FONTS.bn.map(font => (
+              <button
+                key={font.value}
+                onClick={() => dispatch({ type: 'SET_FONT', payload: font.value })}
+                className={`text-left p-3 rounded-xl border transition-all text-sm ${
+                  state.fontFamily === font.value
+                    ? 'border-primary bg-primary/5 font-semibold'
+                    : 'border-border hover:border-primary/30'
+                }`}
+                style={{ fontFamily: font.value }}
+              >
+                <span className="block font-bold">{font.name}</span>
+                <span className="text-xs text-muted-foreground">আমার অর্থ ব্যবস্থাপনা</span>
+              </button>
+            ))}
+          </div>
+
+          <p className="text-xs font-semibold text-muted-foreground px-1 mt-3">English Fonts</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {FONTS.en.map(font => (
+              <button
+                key={font.value}
+                onClick={() => dispatch({ type: 'SET_FONT', payload: font.value })}
+                className={`text-left p-3 rounded-xl border transition-all text-sm ${
+                  state.fontFamily === font.value
+                    ? 'border-primary bg-primary/5 font-semibold'
+                    : 'border-border hover:border-primary/30'
+                }`}
+                style={{ fontFamily: font.value }}
+              >
+                <span className="block font-bold">{font.name}</span>
+                <span className="text-xs text-muted-foreground">Finance Control App</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Cloud Sync Status */}
+      {user && !isGuest && (
+        <div className="bg-card rounded-2xl border border-border p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+              <Cloud size={20} />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">{t('cloudSync')}</p>
+              <p className="text-xs text-emerald-500 font-medium">✓ {t('synced')} — {user.email}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Menu Items */}
       <div className="space-y-2">
         {menuItems.map((item, i) => (
           <motion.button
@@ -82,9 +156,13 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <div className="text-center pt-6">
-        <p className="text-xs text-muted-foreground">MoneyFlow v1.0</p>
-        <p className="text-xs text-muted-foreground">Your data is stored locally on this device</p>
+      <div className="text-center pt-6 space-y-1">
+        <p className="text-sm font-bold text-foreground">Finance Control v1.0</p>
+        <p className="text-xs text-muted-foreground">Developer: Robi</p>
+        <p className="text-xs text-muted-foreground">WhatsApp: 01726782512</p>
+        <p className="text-xs text-muted-foreground mt-2">
+          {user && !isGuest ? '☁️ Cloud sync active' : '📱 Data stored locally'}
+        </p>
       </div>
     </div>
   );

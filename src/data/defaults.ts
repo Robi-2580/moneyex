@@ -26,6 +26,24 @@ export const DEFAULT_WALLETS: Wallet[] = [
   { id: 'wallet-bank', name: 'Bank Account', type: 'bank', balance: 0, icon: '🏦', color: '#3B82F6', createdAt: new Date().toISOString() },
 ];
 
+// Available fonts
+export const FONTS = {
+  bn: [
+    { name: 'Noto Sans Bengali', value: "'Noto Sans Bengali', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap' },
+    { name: 'Hind Siliguri', value: "'Hind Siliguri', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap' },
+    { name: 'Baloo Da 2', value: "'Baloo Da 2', cursive", url: 'https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700;800&display=swap' },
+    { name: 'Galada', value: "'Galada', cursive", url: 'https://fonts.googleapis.com/css2?family=Galada&display=swap' },
+    { name: 'Anek Bangla', value: "'Anek Bangla', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700&display=swap' },
+  ],
+  en: [
+    { name: 'Inter', value: "'Inter', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' },
+    { name: 'Poppins', value: "'Poppins', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap' },
+    { name: 'Nunito', value: "'Nunito', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap' },
+    { name: 'Roboto', value: "'Roboto', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap' },
+    { name: 'Space Grotesk', value: "'Space Grotesk', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap' },
+  ],
+};
+
 // i18n labels
 export const LABELS = {
   bn: {
@@ -59,11 +77,11 @@ export const LABELS = {
     bank: 'ব্যাংক',
     cash: 'নগদ',
     mobile: 'মোবাইল',
-    appName: 'ফাইন্যাল ম্যানেজার',
-    welcomeBack: 'Welcome Back!',
-    signIn: 'Sign In',
-    signUp: 'Sign Up',
-    guestMode: 'Continue as Guest',
+    appName: 'Finance Control',
+    welcomeBack: 'ফিরে আসার জন্য স্বাগতম!',
+    signIn: 'সাইন ইন',
+    signUp: 'সাইন আপ',
+    guestMode: 'গেস্ট মোডে চালিয়ে যান',
     exportData: 'ডাটা এক্সপোর্ট',
     importData: 'ডাটা ইমপোর্ট',
     clearData: 'সব ডাটা মুছুন',
@@ -71,7 +89,12 @@ export const LABELS = {
     budgetExceeded: 'বাজেট ছেড়ে গেছে!',
     withinBudget: 'বাজেটে আছে',
     noTransactions: 'কোনো লেনদেন নেই',
-    clickToAdd: 'বাজেটে নোট করতে ট্যাপ করুন',
+    clickToAdd: 'নতুন লেনদেন যোগ করতে + বাটনে ক্লিক করুন',
+    font: 'ফন্ট',
+    selectFont: 'ফন্ট নির্বাচন করুন',
+    cloudSync: 'ক্লাউড সিঙ্ক',
+    syncing: 'সিঙ্ক হচ্ছে...',
+    synced: 'সিঙ্ক সম্পন্ন',
   },
   en: {
     home: 'Home',
@@ -104,7 +127,7 @@ export const LABELS = {
     bank: 'Bank',
     cash: 'Cash',
     mobile: 'Mobile',
-    appName: 'Finance Manager',
+    appName: 'Finance Control',
     welcomeBack: 'Welcome Back!',
     signIn: 'Sign In',
     signUp: 'Sign Up',
@@ -117,5 +140,10 @@ export const LABELS = {
     withinBudget: 'Within Budget',
     noTransactions: 'No transactions yet',
     clickToAdd: 'Click + to add your first transaction',
+    font: 'Font',
+    selectFont: 'Select Font',
+    cloudSync: 'Cloud Sync',
+    syncing: 'Syncing...',
+    synced: 'Synced',
   },
 };

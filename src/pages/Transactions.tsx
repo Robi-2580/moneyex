@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Trash2, Pencil, Filter } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { format } from 'date-fns';
 import { Transaction } from '@/types';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import SwipeableTransaction from '@/components/SwipeableTransaction';
 
 export default function Transactions() {
   const { state, dispatch, getCategory, getWallet } = useApp();
@@ -27,7 +28,6 @@ export default function Transactions() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [state.transactions, filterType, search, getCategory, getWallet]);
 
-  // Group by date
   const grouped = useMemo(() => {
     const map = new Map<string, Transaction[]>();
     filtered.forEach(t => {
@@ -59,6 +59,9 @@ export default function Transactions() {
         ))}
       </div>
 
+      {/* Swipe hint */}
+      <p className="text-xs text-muted-foreground text-center">← Swipe left to delete · Swipe right to edit →</p>
+
       {/* List */}
       {grouped.length === 0 ? (
         <div className="text-center py-12">
@@ -74,25 +77,28 @@ export default function Transactions() {
                 const cat = getCategory(txn.categoryId);
                 const wal = getWallet(txn.walletId);
                 return (
-                  <motion.div key={txn.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.03 }}
-                    className="glass-card rounded-2xl p-3.5 flex items-center gap-3"
+                  <SwipeableTransaction
+                    key={txn.id}
+                    onEdit={() => setEditTxn(txn)}
+                    onDelete={() => dispatch({ type: 'DELETE_TRANSACTION', payload: txn })}
                   >
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: cat?.color + '18' }}>
-                      {cat?.icon || '📦'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm">{cat?.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{txn.note || wal?.name}</p>
-                    </div>
-                    <span className={`font-bold text-sm mr-1 ${txn.type === 'income' ? 'text-success' : 'text-destructive'}`}>
-                      {txn.type === 'income' ? '+' : '-'}৳{txn.amount.toLocaleString()}
-                    </span>
-                    <div className="flex gap-0.5">
-                      <button onClick={() => setEditTxn(txn)} className="p-1.5 rounded-lg hover:bg-muted"><Pencil size={14} /></button>
-                      <button onClick={() => dispatch({ type: 'DELETE_TRANSACTION', payload: txn })} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive"><Trash2 size={14} /></button>
-                    </div>
-                  </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="bg-card border border-border rounded-2xl p-3.5 flex items-center gap-3"
+                    >
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: cat?.color + '18' }}>
+                        {cat?.icon || '📦'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm">{cat?.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{txn.note || wal?.name}</p>
+                      </div>
+                      <span className={`font-bold text-sm ${txn.type === 'income' ? 'text-success' : 'text-destructive'}`}>
+                        {txn.type === 'income' ? '+' : '-'}৳{txn.amount.toLocaleString()}
+                      </span>
+                    </motion.div>
+                  </SwipeableTransaction>
                 );
               })}
             </div>
