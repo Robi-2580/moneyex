@@ -39,7 +39,7 @@ export interface Budget {
 
 export interface Loan {
   id: string;
-  type: 'payable' | 'receivable' | 'loan'; // পাওনা, দেনা, লোন
+  type: 'payable' | 'receivable' | 'loan';
   personName: string;
   amount: number;
   paidAmount: number;
@@ -58,3 +58,4 @@ export interface User {
 }
 
 export type Language = 'bn' | 'en';
+export type FontFamily = string;
