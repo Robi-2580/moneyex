@@ -40,8 +40,8 @@ export default function AppLayout() {
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-border shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">G</div>
-        <h1 className="text-base font-bold whitespace-nowrap">{t('appName')}</h1>
+        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">FC</div>
+        <h1 className="text-base font-bold whitespace-nowrap">Finance Control</h1>
       </div>
 
       {/* Nav */}

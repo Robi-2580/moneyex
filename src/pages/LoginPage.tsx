@@ -49,9 +49,9 @@ export default function LoginPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full" />
         </div>
         <div className="relative z-10 text-center text-white px-12">
-          <h1 className="text-5xl font-extrabold mb-4">💰 MoneyFlow</h1>
+          <h1 className="text-5xl font-extrabold mb-4">💰 Finance Control</h1>
           <p className="text-xl opacity-90 font-medium">আপনার আর্থিক ব্যবস্থাপনার সেরা সমাধান</p>
-          <p className="text-sm opacity-70 mt-2">Premium Money Manager</p>
+          <p className="text-sm opacity-70 mt-2">Premium Money Manager by Robi</p>
         </div>
       </div>
 
@@ -63,7 +63,8 @@ export default function LoginPage() {
           className="w-full max-w-md"
         >
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-extrabold gradient-text">💰 MoneyFlow</h1>
+            <h1 className="text-3xl font-extrabold gradient-text">💰 Finance Control</h1>
+            <p className="text-sm text-muted-foreground mt-1">by Robi</p>
           </div>
 
           <div className="bg-card rounded-3xl p-8 shadow-xl border border-border">
@@ -151,6 +152,8 @@ export default function LoginPage() {
               </button>
             </p>
           </div>
+
+          <p className="text-center text-xs text-muted-foreground mt-4">Developer: Robi · WhatsApp: 01726782512</p>
         </motion.div>
       </div>
     </div>

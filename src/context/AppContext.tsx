@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
-import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS } from '@/data/defaults';
+import { Wallet, Category, Transaction, Budget, Loan, Language, FontFamily } from '@/types';
+import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS, FONTS } from '@/data/defaults';
+import { useAuth } from '@/context/AuthContext';
+import { saveStateToFirestore, loadStateFromFirestore, subscribeToFirestore } from '@/lib/firestore';
 
 interface AppState {
   wallets: Wallet[];
@@ -10,6 +12,7 @@ interface AppState {
   loans: Loan[];
   isDark: boolean;
   language: Language;
+  fontFamily: string;
 }
 
 type Action =
@@ -30,7 +33,8 @@ type Action =
   | { type: 'UPDATE_LOAN'; payload: Loan }
   | { type: 'DELETE_LOAN'; payload: string }
   | { type: 'TOGGLE_THEME' }
-  | { type: 'SET_LANGUAGE'; payload: Language };
+  | { type: 'SET_LANGUAGE'; payload: Language }
+  | { type: 'SET_FONT'; payload: string };
 
 const initialState: AppState = {
   wallets: DEFAULT_WALLETS,
@@ -40,6 +44,7 @@ const initialState: AppState = {
   loans: [],
   isDark: false,
   language: 'bn',
+  fontFamily: "'Hind Siliguri', sans-serif",
 };
 
 function reducer(state: AppState, action: Action): AppState {
@@ -110,6 +115,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, isDark: !state.isDark };
     case 'SET_LANGUAGE':
       return { ...state, language: action.payload };
+    case 'SET_FONT':
+      return { ...state, fontFamily: action.payload };
     default:
       return state;
   }
@@ -131,30 +138,76 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { user, isGuest } = useAuth();
 
+  // Load data on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('money-manager-data');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        dispatch({ type: 'SET_STATE', payload: parsed });
+    const loadData = async () => {
+      // Try Firestore first for logged-in users
+      if (user && !isGuest) {
+        const cloudData = await loadStateFromFirestore();
+        if (cloudData) {
+          dispatch({ type: 'SET_STATE', payload: cloudData });
+          return;
+        }
       }
-    } catch (e) {
-      console.error('Failed to load data', e);
-    }
-  }, []);
+      // Fallback to localStorage
+      try {
+        const saved = localStorage.getItem('money-manager-data');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          dispatch({ type: 'SET_STATE', payload: parsed });
+        }
+      } catch (e) {
+        console.error('Failed to load data', e);
+      }
+    };
+    loadData();
+  }, [user, isGuest]);
 
+  // Subscribe to Firestore real-time updates
+  useEffect(() => {
+    if (!user || isGuest) return;
+    const unsub = subscribeToFirestore((data) => {
+      dispatch({ type: 'SET_STATE', payload: data });
+    });
+    return () => { unsub?.(); };
+  }, [user, isGuest]);
+
+  // Save to localStorage + Firestore
   useEffect(() => {
     try {
       localStorage.setItem('money-manager-data', JSON.stringify(state));
     } catch (e) {
       console.error('Failed to save data', e);
     }
-  }, [state]);
+    // Save to Firestore for logged-in users
+    if (user && !isGuest) {
+      saveStateToFirestore(state);
+    }
+  }, [state, user, isGuest]);
 
+  // Apply theme
   useEffect(() => {
     document.documentElement.classList.toggle('dark', state.isDark);
   }, [state.isDark]);
+
+  // Apply font
+  useEffect(() => {
+    document.documentElement.style.fontFamily = state.fontFamily;
+    // Load Google Font
+    const allFonts = [...FONTS.bn, ...FONTS.en];
+    const fontDef = allFonts.find(f => f.value === state.fontFamily);
+    if (fontDef) {
+      const existing = document.querySelector(`link[href="${fontDef.url}"]`);
+      if (!existing) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = fontDef.url;
+        document.head.appendChild(link);
+      }
+    }
+  }, [state.fontFamily]);
 
   const totalBalance = state.wallets.reduce((sum, w) => sum + w.balance, 0);
   const currentMonth = new Date().toISOString().slice(0, 7);
