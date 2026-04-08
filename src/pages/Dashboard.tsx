@@ -16,7 +16,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { openQuickAdd } = useOutletContext<{ openQuickAdd: (catId?: string) => void }>();
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Guest';
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Guest';
   const greeting = (() => {
     const h = new Date().getHours();
     if (h < 12) return t('goodMorning');
