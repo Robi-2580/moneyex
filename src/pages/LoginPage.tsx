@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { lovable } from '@/integrations/lovable/index';
+
 
 export default function LoginPage() {
   const { login, register, loginWithGoogle, continueAsGuest } = useAuth();
@@ -34,14 +34,7 @@ export default function LoginPage() {
   const handleGoogle = async () => {
     setError('');
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-      if (result.error) {
-        setError(result.error.message || 'Google login failed');
-        return;
-      }
-      if (result.redirected) return;
+      await loginWithGoogle();
     } catch (err: any) {
       setError(err.message || 'Google login failed');
     }

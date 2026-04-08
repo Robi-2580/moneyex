@@ -17,7 +17,7 @@ export default function AppLayout() {
   const { user, isGuest, logout } = useAuth();
   const location = useLocation();
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Guest';
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Guest';
 
   const sidebarItems = [
     { to: '/', icon: Home, label: t('home') },
