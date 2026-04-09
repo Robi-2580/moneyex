@@ -253,9 +253,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.toggle('dark', state.isDark);
   }, [state.isDark]);
 
-  // Apply font
+  // Apply font globally
   useEffect(() => {
-    document.documentElement.style.fontFamily = state.fontFamily;
+    document.documentElement.style.setProperty('font-family', state.fontFamily, 'important');
+    document.body.style.setProperty('font-family', state.fontFamily, 'important');
     const allFonts = [...FONTS.bn, ...FONTS.en];
     const fontDef = allFonts.find(f => f.value === state.fontFamily);
     if (fontDef) {
