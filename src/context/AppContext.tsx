@@ -45,7 +45,7 @@ const initialState: AppState = {
   loans: [],
   isDark: false,
   language: 'bn',
-  fontFamily: "'Hind Siliguri', sans-serif",
+  fontFamily: "'Tiro Bangla', serif",
 };
 
 function reducer(state: AppState, action: Action): AppState {

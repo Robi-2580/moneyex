@@ -72,6 +72,6 @@ export async function loadUserData(userId: string) {
     loans,
     isDark: profile?.is_dark ?? false,
     language: (profile?.language as 'bn' | 'en') ?? 'bn',
-    fontFamily: profile?.font_family ?? "'Hind Siliguri', sans-serif",
+    fontFamily: profile?.font_family ?? "'Tiro Bangla', serif",
   };
 }

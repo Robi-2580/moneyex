@@ -29,10 +29,10 @@ export const DEFAULT_WALLETS: Wallet[] = [
 // Available fonts
 export const FONTS = {
   bn: [
+    { name: 'Tiro Bangla', value: "'Tiro Bangla', serif", url: 'https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&display=swap' },
     { name: 'Noto Sans Bengali', value: "'Noto Sans Bengali', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap' },
     { name: 'Hind Siliguri', value: "'Hind Siliguri', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap' },
     { name: 'Baloo Da 2', value: "'Baloo Da 2', cursive", url: 'https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700;800&display=swap' },
-    { name: 'Galada', value: "'Galada', cursive", url: 'https://fonts.googleapis.com/css2?family=Galada&display=swap' },
     { name: 'Anek Bangla', value: "'Anek Bangla', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700&display=swap' },
   ],
   en: [
