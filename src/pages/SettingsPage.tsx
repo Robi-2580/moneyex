@@ -6,9 +6,17 @@ import { useAuth } from '@/context/AuthContext';
 import { FONTS } from '@/data/defaults';
 
 export default function SettingsPage() {
-  const { state, dispatch, t } = useApp();
+  const { state, dispatch, t, dbDispatch } = useApp();
   const { user, isGuest } = useAuth();
   const navigate = useNavigate();
+
+  const d = (action: any) => {
+    if (user && !isGuest) {
+      dbDispatch(action);
+    } else {
+      dispatch(action);
+    }
+  };
 
   const exportData = () => {
     const data = JSON.stringify(state, null, 2);
@@ -48,7 +56,7 @@ export default function SettingsPage() {
   };
 
   const toggleLanguage = () => {
-    dispatch({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
+    d({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
   };
 
   const allFonts = [...FONTS.bn, ...FONTS.en];
@@ -84,7 +92,7 @@ export default function SettingsPage() {
             {FONTS.bn.map(font => (
               <button
                 key={font.value}
-                onClick={() => dispatch({ type: 'SET_FONT', payload: font.value })}
+                onClick={() => d({ type: 'SET_FONT', payload: font.value })}
                 className={`text-left p-3 rounded-xl border transition-all text-sm ${
                   state.fontFamily === font.value
                     ? 'border-primary bg-primary/5 font-semibold'
@@ -103,7 +111,7 @@ export default function SettingsPage() {
             {FONTS.en.map(font => (
               <button
                 key={font.value}
-                onClick={() => dispatch({ type: 'SET_FONT', payload: font.value })}
+                onClick={() => d({ type: 'SET_FONT', payload: font.value })}
                 className={`text-left p-3 rounded-xl border transition-all text-sm ${
                   state.fontFamily === font.value
                     ? 'border-primary bg-primary/5 font-semibold'
