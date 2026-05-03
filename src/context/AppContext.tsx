@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useState } from 'react';
 import { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
 import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS, FONTS } from '@/data/defaults';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { loadUserData } from '@/lib/supabase-data';
+import { syncOrQueue, flushQueue, getQueue, type SyncAction } from '@/lib/sync-queue';
 
 interface AppState {
   wallets: Wallet[];
