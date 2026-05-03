@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useState } from 'react';
 import { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
 import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS, FONTS } from '@/data/defaults';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { loadUserData } from '@/lib/supabase-data';
+import { syncOrQueue, flushQueue, getQueue, type SyncAction } from '@/lib/sync-queue';
 
 interface AppState {
   wallets: Wallet[];
@@ -111,6 +111,8 @@ interface AppContextType {
   t: (key: keyof typeof LABELS['bn']) => string;
   catName: (cat: Category) => string;
   dbDispatch: (action: Action) => Promise<void>;
+  isOnline: boolean;
+  pendingSync: number;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -157,106 +159,83 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, user, isGuest]);
 
-  // Database dispatch — persists actions to Supabase
+  // Database dispatch — persists actions through offline-aware sync queue
   const dbDispatch = useCallback(async (action: Action) => {
     dispatch(action);
     if (!user || isGuest) return;
 
+    const q = (a: SyncAction) => syncOrQueue(user.id, a);
+
     try {
       switch (action.type) {
-        case 'ADD_WALLET': {
-          const w = action.payload;
-          await supabase.from('wallets').insert({ id: w.id, user_id: user.id, name: w.name, type: w.type, balance: w.balance, icon: w.icon, color: w.color });
-          break;
-        }
-        case 'UPDATE_WALLET': {
-          const w = action.payload;
-          await supabase.from('wallets').update({ name: w.name, type: w.type, balance: w.balance, icon: w.icon, color: w.color }).eq('id', w.id);
-          break;
-        }
-        case 'DELETE_WALLET':
-          await supabase.from('wallets').delete().eq('id', action.payload);
-          break;
-        case 'ADD_CATEGORY': {
-          const c = action.payload;
-          await supabase.from('categories').insert({ id: c.id, user_id: user.id, name: c.name, name_bn: c.nameBn, type: c.type, icon: c.icon, color: c.color, is_default: c.isDefault });
-          break;
-        }
-        case 'UPDATE_CATEGORY': {
-          const c = action.payload;
-          await supabase.from('categories').update({ name: c.name, name_bn: c.nameBn, type: c.type, icon: c.icon, color: c.color }).eq('id', c.id);
-          break;
-        }
-        case 'DELETE_CATEGORY':
-          await supabase.from('categories').delete().eq('id', action.payload);
-          break;
         case 'ADD_TRANSACTION': {
           const t = action.payload;
-          await supabase.from('transactions').insert({ id: t.id, user_id: user.id, type: t.type, amount: t.amount, category_id: t.categoryId, wallet_id: t.walletId, note: t.note, date: t.date });
-          // Update wallet balance
+          await q({ type: 'ADD_TRANSACTION', payload: t });
           const wallet = state.wallets.find(w => w.id === t.walletId);
           if (wallet) {
             const newBal = t.type === 'income' ? wallet.balance + t.amount : wallet.balance - t.amount;
-            await supabase.from('wallets').update({ balance: newBal }).eq('id', t.walletId);
+            await q({ type: 'WALLET_BALANCE', payload: { walletId: t.walletId, balance: newBal } });
           }
-          break;
-        }
-        case 'UPDATE_TRANSACTION': {
-          const { old: oldT, new: newT } = action.payload;
-          await supabase.from('transactions').update({ type: newT.type, amount: newT.amount, category_id: newT.categoryId, wallet_id: newT.walletId, note: newT.note, date: newT.date }).eq('id', newT.id);
-          // Recalculate wallet balances (simplified — reload is better but this works for now)
           break;
         }
         case 'DELETE_TRANSACTION': {
           const dt = action.payload;
-          await supabase.from('transactions').delete().eq('id', dt.id);
+          await q({ type: 'DELETE_TRANSACTION', payload: dt });
           const dw = state.wallets.find(w => w.id === dt.walletId);
           if (dw) {
             const newBal = dt.type === 'income' ? dw.balance - dt.amount : dw.balance + dt.amount;
-            await supabase.from('wallets').update({ balance: newBal }).eq('id', dt.walletId);
+            await q({ type: 'WALLET_BALANCE', payload: { walletId: dt.walletId, balance: newBal } });
           }
           break;
         }
-        case 'ADD_BUDGET': {
-          const b = action.payload;
-          await supabase.from('budgets').insert({ id: b.id, user_id: user.id, category_id: b.categoryId, amount: b.amount, month: b.month, spent: b.spent });
-          break;
-        }
-        case 'UPDATE_BUDGET': {
-          const b = action.payload;
-          await supabase.from('budgets').update({ category_id: b.categoryId, amount: b.amount, month: b.month, spent: b.spent }).eq('id', b.id);
-          break;
-        }
-        case 'DELETE_BUDGET':
-          await supabase.from('budgets').delete().eq('id', action.payload);
-          break;
-        case 'ADD_LOAN': {
-          const l = action.payload;
-          await supabase.from('loans').insert({ id: l.id, user_id: user.id, type: l.type, person_name: l.personName, amount: l.amount, paid_amount: l.paidAmount, note: l.note, date: l.date, due_date: l.dueDate, status: l.status });
-          break;
-        }
-        case 'UPDATE_LOAN': {
-          const l = action.payload;
-          await supabase.from('loans').update({ type: l.type, person_name: l.personName, amount: l.amount, paid_amount: l.paidAmount, note: l.note, date: l.date, due_date: l.dueDate, status: l.status }).eq('id', l.id);
-          break;
-        }
-        case 'DELETE_LOAN':
-          await supabase.from('loans').delete().eq('id', action.payload);
-          break;
         case 'TOGGLE_THEME':
-          await supabase.from('profiles').update({ is_dark: !state.isDark }).eq('user_id', user.id);
+          await q({ type: 'TOGGLE_THEME', payload: !state.isDark });
           break;
-        case 'SET_LANGUAGE':
-          await supabase.from('profiles').update({ language: action.payload }).eq('user_id', user.id);
+        case 'SET_STATE':
           break;
-        case 'SET_FONT':
-          await supabase.from('profiles').update({ font_family: action.payload }).eq('user_id', user.id);
-          break;
+        default:
+          await q(action as unknown as SyncAction);
       }
     } catch (e) {
       console.error('DB sync error:', e);
     }
   }, [user, isGuest, state.wallets, state.isDark]);
+
+  // Online/offline detection + auto-flush queue when back online
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [pendingSync, setPendingSync] = useState<number>(0);
+
+  useEffect(() => {
+    const updatePending = () => { if (user && !isGuest) setPendingSync(getQueue(user.id).length); };
+    if (user && !isGuest) updatePending(); else setPendingSync(0);
+
+    const onOnline = async () => {
+      setIsOnline(true);
+      if (user && !isGuest) {
+        await flushQueue(user.id);
+        updatePending();
+        try {
+          const data = await loadUserData(user.id);
+          dispatch({ type: 'SET_STATE', payload: data });
+        } catch {}
+      }
+    };
+    const onOffline = () => setIsOnline(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+    const id = window.setInterval(updatePending, 3000);
+
+    if (user && !isGuest && navigator.onLine && getQueue(user.id).length > 0) {
+      onOnline();
+    }
+
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+      window.clearInterval(id);
+    };
+  }, [user, isGuest]);
+
 
   // Apply theme
   useEffect(() => {
@@ -292,7 +271,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const catName = useCallback((cat: Category) => state.language === 'bn' && cat.nameBn ? cat.nameBn : cat.name, [state.language]);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, dbDispatch }}>
+    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, dbDispatch, isOnline, pendingSync }}>
       {children}
     </AppContext.Provider>
   );
