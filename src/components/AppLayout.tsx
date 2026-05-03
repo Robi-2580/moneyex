@@ -116,6 +116,20 @@ export default function AppLayout() {
             </button>
           </div>
           <div className="flex items-center gap-2">
+            {/* Online/Offline status */}
+            {!isOnline ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-600 text-xs font-semibold" title="অফলাইন — ডাটা লোকাল সেভ হচ্ছে">
+                <WifiOff size={14} />
+                <span className="hidden sm:inline">{state.language === 'bn' ? 'অফলাইন' : 'Offline'}</span>
+                {pendingSync > 0 && <span className="bg-amber-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>}
+              </div>
+            ) : pendingSync > 0 ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 text-xs font-semibold" title="সিঙ্ক হচ্ছে...">
+                <CloudOff size={14} className="animate-pulse" />
+                <span className="hidden sm:inline">{state.language === 'bn' ? 'সিঙ্ক হচ্ছে' : 'Syncing'}</span>
+                <span className="bg-blue-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>
+              </div>
+            ) : null}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => openQuickAdd()}
