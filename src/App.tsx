@@ -51,6 +51,7 @@ function AppRoutes() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/loans" element={<Loans />} />
+            <Route path="/search" element={<Search />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
