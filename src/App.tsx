@@ -14,6 +14,7 @@ import Categories from "@/pages/Categories";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
 import Loans from "@/pages/Loans";
+import Search from "@/pages/Search";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
