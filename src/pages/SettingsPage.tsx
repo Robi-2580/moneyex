@@ -210,14 +210,45 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <div className="text-center pt-6 space-y-1">
-        <p className="text-sm font-bold text-foreground">Finance Control v1.0</p>
-        <p className="text-xs text-muted-foreground">Developer: Robi</p>
-        <p className="text-xs text-muted-foreground">WhatsApp: 01726782512</p>
-        <p className="text-xs text-muted-foreground mt-2">
-          {user && !isGuest ? '☁️ Cloud sync active' : '📱 Data stored locally'}
-        </p>
+      {/* Developer Info Card */}
+      <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-5 mt-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shadow-md">
+            R
+          </div>
+          <div>
+            <p className="font-bold text-sm">Robi</p>
+            <p className="text-xs text-muted-foreground">Developer · Finance Control</p>
+          </div>
+        </div>
+        <div className="space-y-1.5 mb-3">
+          <a href="https://wa.me/8801726782512" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
+            <MessageCircle size={14} /> WhatsApp: 01726782512
+          </a>
+          <a href="mailto:robi@example.com" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
+            <Mail size={14} /> Email Developer
+          </a>
+        </div>
+        <div className="flex items-center gap-2 pt-3 border-t border-primary/10">
+          <a href="https://facebook.com/movewithrobi" target="_blank" rel="noopener noreferrer"
+            className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all" title="Facebook">
+            <Facebook size={16} />
+          </a>
+          <a href="https://github.com/movewithrobi" target="_blank" rel="noopener noreferrer"
+            className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-all" title="GitHub">
+            <Github size={16} />
+          </a>
+          <a href="https://linkedin.com/in/movewithrobi" target="_blank" rel="noopener noreferrer"
+            className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all" title="LinkedIn">
+            <Linkedin size={16} />
+          </a>
+          <span className="ml-auto text-[10px] text-muted-foreground font-medium">v1.0</span>
+        </div>
       </div>
+
+      <p className="text-center text-xs text-muted-foreground pt-2">
+        {user && !isGuest ? '☁️ Cloud sync active' : '📱 Data stored locally'}
+      </p>
     </div>
   );
 }
