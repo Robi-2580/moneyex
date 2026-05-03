@@ -13,7 +13,7 @@ export default function AppLayout() {
   const [showAdd, setShowAdd] = useState(false);
   const [prefilledCategoryId, setPrefilledCategoryId] = useState<string | undefined>();
   const [mobileSidebar, setMobileSidebar] = useState(false);
-  const { state, dispatch, t } = useApp();
+  const { state, dispatch, t, isOnline, pendingSync } = useApp();
   const { user, isGuest, logout } = useAuth();
   const location = useLocation();
 
