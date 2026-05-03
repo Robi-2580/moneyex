@@ -119,13 +119,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { user, isGuest } = useAuth();
 
-  // Load data from database on mount
+  // Load data from database on mount (with instant cache hydration)
   useEffect(() => {
     const load = async () => {
       if (user && !isGuest) {
+        const cacheKey = `mm-cache-${user.id}`;
+        // 1. Hydrate instantly from cache
+        try {
+          const cached = localStorage.getItem(cacheKey);
+          if (cached) dispatch({ type: 'SET_STATE', payload: JSON.parse(cached) });
+        } catch {}
+        // 2. Sync fresh data from cloud in background
         try {
           const data = await loadUserData(user.id);
           dispatch({ type: 'SET_STATE', payload: data });
+          try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch {}
         } catch (e) {
           console.error('Failed to load data from cloud', e);
         }
@@ -140,10 +148,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     load();
   }, [user, isGuest]);
 
-  // Save guest data to localStorage
+  // Save guest data to localStorage; cache cloud data per-user for instant reload
   useEffect(() => {
     if (isGuest || !user) {
       try { localStorage.setItem('money-manager-data', JSON.stringify(state)); } catch {}
+    } else if (user) {
+      try { localStorage.setItem(`mm-cache-${user.id}`, JSON.stringify(state)); } catch {}
     }
   }, [state, user, isGuest]);
 
