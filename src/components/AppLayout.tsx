@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Home, Wallet, BarChart3, Settings, Plus, Moon, Sun,
-  ReceiptText, Search, StickyNote, Landmark, Tag, Menu, X, LogOut, User, BookOpen
+  ReceiptText, Search, Landmark, Tag, Menu, LogOut, BookOpen, WifiOff, CloudOff, Cloud
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
