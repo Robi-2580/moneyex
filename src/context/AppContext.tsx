@@ -111,6 +111,8 @@ interface AppContextType {
   t: (key: keyof typeof LABELS['bn']) => string;
   catName: (cat: Category) => string;
   dbDispatch: (action: Action) => Promise<void>;
+  isOnline: boolean;
+  pendingSync: number;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
