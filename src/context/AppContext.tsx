@@ -271,7 +271,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const catName = useCallback((cat: Category) => state.language === 'bn' && cat.nameBn ? cat.nameBn : cat.name, [state.language]);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, dbDispatch }}>
+    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, dbDispatch, isOnline, pendingSync }}>
       {children}
     </AppContext.Provider>
   );
