@@ -5,7 +5,7 @@ import { useApp } from '@/context/AppContext';
 import { Category } from '@/types';
 
 const iconOptions = ['🍔', '🚗', '🛍️', '📄', '💊', '📚', '🎮', '🏠', '☕', '✈️', '💰', '💻', '📈', '🎁', '💵', '📦', '🎵', '🏋️', '🎨', '🔧'];
-const colorOptions = ['#EF4444', '#3B82F6', '#8B5CF6', '#F59E0B', '#10B981', '#6366F1', '#EC4899', '#14B8A6', '#F97316', '#6B7280'];
+const colorOptions = ['#EF4444', '#A855F7', '#8B5CF6', '#F59E0B', '#10B981', '#0EA5A4', '#EC4899', '#14B8A6', '#F97316', '#6B7280'];
 
 export default function Categories() {
   const { state, dispatch } = useApp();
