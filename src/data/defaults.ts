@@ -23,7 +23,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
 
 export const DEFAULT_WALLETS: Wallet[] = [
   { id: 'wallet-cash', name: 'Cash', type: 'cash', balance: 0, icon: '💵', color: '#22C55E', createdAt: new Date().toISOString() },
-  { id: 'wallet-bank', name: 'Bank Account', type: 'bank', balance: 0, icon: '🏦', color: '#3B82F6', createdAt: new Date().toISOString() },
+  { id: 'wallet-bank', name: 'Bank Account', type: 'bank', balance: 0, icon: '🏦', color: '#A855F7', createdAt: new Date().toISOString() },
 ];
 
 // Available fonts
