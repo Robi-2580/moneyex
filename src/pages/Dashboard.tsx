@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { ArrowDownLeft, ArrowUpRight, Eye, EyeOff, ChevronRight, TrendingDown, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowDownLeft, ArrowUpRight, Eye, EyeOff, ChevronRight, Sun, Sunrise, Sunset, Moon, CloudSun } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
