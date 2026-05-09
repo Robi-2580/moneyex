@@ -1,10 +1,11 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Home, Wallet, BarChart3, Settings, Plus, Moon, Sun,
-  ReceiptText, Search, Landmark, Tag, Menu, LogOut, BookOpen, WifiOff, CloudOff, Cloud
+  ReceiptText, Search, Landmark, Tag, Menu, LogOut, BookOpen, WifiOff, CloudOff,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
@@ -13,6 +14,12 @@ export default function AppLayout() {
   const [showAdd, setShowAdd] = useState(false);
   const [prefilledCategoryId, setPrefilledCategoryId] = useState<string | undefined>();
   const [mobileSidebar, setMobileSidebar] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    try { return localStorage.getItem('mm-sidebar-collapsed') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mm-sidebar-collapsed', collapsed ? '1' : '0'); } catch {}
+  }, [collapsed]);
   const { state, dispatch, t, isOnline, pendingSync } = useApp();
   const { user, isGuest, logout } = useAuth();
   const location = useLocation();
