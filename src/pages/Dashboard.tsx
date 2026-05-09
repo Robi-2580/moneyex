@@ -70,8 +70,36 @@ export default function Dashboard() {
                   {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </div>
-              <h2 className="text-3xl font-extrabold mb-4">
-                {showBalance ? `৳${totalBalance.toLocaleString('en-IN')}` : '৳ ••••••'}
+              <h2
+                onClick={() => setShowBalance(!showBalance)}
+                className="text-3xl font-extrabold mb-4 cursor-pointer select-none relative h-10 overflow-hidden"
+                title={showBalance ? 'Hide' : 'Reveal'}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {showBalance ? (
+                    <motion.span
+                      key="amount"
+                      initial={{ x: -60, opacity: 0, filter: 'blur(8px)' }}
+                      animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+                      exit={{ x: 60, opacity: 0, filter: 'blur(8px)' }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                      className="block"
+                    >
+                      ৳{totalBalance.toLocaleString('en-IN')}
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="hidden"
+                      initial={{ x: 60, opacity: 0, filter: 'blur(8px)' }}
+                      animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+                      exit={{ x: -60, opacity: 0, filter: 'blur(8px)' }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                      className="block tracking-widest"
+                    >
+                      ৳ ••••••
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </h2>
               <div className="flex gap-3">
                 <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 flex-1">
