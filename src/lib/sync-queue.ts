@@ -22,19 +22,31 @@ export type SyncAction =
   | { type: 'SET_FONT'; payload: string }
   | { type: 'WALLET_BALANCE'; payload: { walletId: string; balance: number } };
 
-const queueKey = (uid: string) => `mm-sync-queue-${uid}`;
-
-export function getQueue(userId: string): SyncAction[] {
-  try { return JSON.parse(localStorage.getItem(queueKey(userId)) || '[]'); } catch { return []; }
+export interface QueuedItem {
+  id: string;
+  ts: number;
+  action: SyncAction;
 }
 
-export function setQueue(userId: string, q: SyncAction[]) {
+const queueKey = (uid: string) => `mm-sync-queue-${uid}`;
+
+export function getQueue(userId: string): QueuedItem[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(queueKey(userId)) || '[]');
+    // Backwards compat: old queue stored bare actions
+    return raw.map((it: any) =>
+      it && it.action ? it : { id: crypto.randomUUID(), ts: Date.now(), action: it }
+    );
+  } catch { return []; }
+}
+
+export function setQueue(userId: string, q: QueuedItem[]) {
   try { localStorage.setItem(queueKey(userId), JSON.stringify(q)); } catch { }
 }
 
 export function enqueue(userId: string, action: SyncAction) {
   const q = getQueue(userId);
-  q.push(action);
+  q.push({ id: crypto.randomUUID(), ts: Date.now(), action });
   setQueue(userId, q);
 }
 
@@ -109,14 +121,17 @@ export async function executeAction(userId: string, action: SyncAction): Promise
 export async function flushQueue(userId: string): Promise<{ success: number; remaining: number }> {
   const q = getQueue(userId);
   if (q.length === 0) return { success: 0, remaining: 0 };
+  // Conflict-safe ordering: stable sort by timestamp ascending (earliest first)
+  // Last write per resource will naturally win since we process in time order.
+  const ordered = [...q].sort((a, b) => a.ts - b.ts);
   let success = 0;
-  const remaining: SyncAction[] = [];
-  for (const action of q) {
+  const remaining: QueuedItem[] = [];
+  for (const item of ordered) {
     try {
-      await executeAction(userId, action);
+      await executeAction(userId, item.action);
       success++;
     } catch (e) {
-      remaining.push(action);
+      remaining.push(item);
     }
   }
   setQueue(userId, remaining);

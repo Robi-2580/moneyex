@@ -1,10 +1,11 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Home, Wallet, BarChart3, Settings, Plus, Moon, Sun,
-  ReceiptText, Search, Landmark, Tag, Menu, LogOut, BookOpen, WifiOff, CloudOff, Cloud
+  ReceiptText, Search, Landmark, Tag, Menu, LogOut, BookOpen, WifiOff, CloudOff,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
@@ -13,6 +14,12 @@ export default function AppLayout() {
   const [showAdd, setShowAdd] = useState(false);
   const [prefilledCategoryId, setPrefilledCategoryId] = useState<string | undefined>();
   const [mobileSidebar, setMobileSidebar] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    try { return localStorage.getItem('mm-sidebar-collapsed') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mm-sidebar-collapsed', collapsed ? '1' : '0'); } catch {}
+  }, [collapsed]);
   const { state, dispatch, t, isOnline, pendingSync } = useApp();
   const { user, isGuest, logout } = useAuth();
   const location = useLocation();
@@ -36,46 +43,53 @@ export default function AppLayout() {
     setShowAdd(true);
   };
 
-  const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
+  const SidebarContent = ({ onNavigate, isCollapsed = false }: { onNavigate?: () => void; isCollapsed?: boolean }) => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-border shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">FC</div>
-        <h1 className="text-base font-bold whitespace-nowrap">Finance Control</h1>
+      <div className={`flex items-center gap-3 px-4 h-16 border-b border-border shrink-0 ${isCollapsed ? 'justify-center px-2' : ''}`}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md" style={{ background: 'var(--gradient-primary)' }}>FC</div>
+        {!isCollapsed && <h1 className="text-base font-bold whitespace-nowrap gradient-text">Finance Control</h1>}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-3 px-3 space-y-0.5 overflow-y-auto">
+      <nav className={`flex-1 py-3 ${isCollapsed ? 'px-2' : 'px-3'} space-y-1 overflow-y-auto`}>
         {sidebarItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
             onClick={onNavigate}
+            title={isCollapsed ? label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-              ${isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`
+              `flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium transition-all relative group
+              ${isActive
+                ? 'bg-primary/10 text-primary shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:w-1 before:rounded-r-full before:bg-primary'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'}`
             }
           >
             <Icon size={18} className="shrink-0" />
-            <span>{label}</span>
+            {!isCollapsed && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
 
       {/* User section */}
       <div className="border-t border-border p-3">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-2 py-2`}>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md shrink-0" style={{ background: 'var(--gradient-primary)' }}>
             {displayName[0]?.toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate">{displayName}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email || 'Guest Mode'}</p>
-          </div>
-          <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')}>
-            <LogOut size={16} />
-          </button>
+          {!isCollapsed && (
+            <>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{displayName}</p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email || 'Guest Mode'}</p>
+              </div>
+              <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')}>
+                <LogOut size={16} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </>
@@ -84,8 +98,8 @@ export default function AppLayout() {
   return (
     <div className="h-screen flex overflow-hidden bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-60 border-r border-border bg-card shrink-0">
-        <SidebarContent />
+      <aside className={`hidden md:flex flex-col border-r border-border bg-sidebar shrink-0 transition-[width] duration-300 ease-in-out ${collapsed ? 'w-[68px]' : 'w-60'}`}>
+        <SidebarContent isCollapsed={collapsed} />
       </aside>
 
       {/* Mobile Sidebar Overlay */}
@@ -98,7 +112,7 @@ export default function AppLayout() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute left-0 top-0 bottom-0 w-64 bg-card border-r border-border flex flex-col"
+              className="absolute left-0 top-0 bottom-0 w-64 bg-sidebar border-r border-border flex flex-col"
             >
               <SidebarContent onNavigate={() => setMobileSidebar(false)} />
             </motion.aside>
@@ -109,10 +123,17 @@ export default function AppLayout() {
       {/* Main Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 lg:px-6 shrink-0">
-          <div className="flex items-center gap-3">
+        <header className="h-14 border-b border-border bg-card/80 backdrop-blur-md flex items-center justify-between px-4 lg:px-6 shrink-0">
+          <div className="flex items-center gap-2">
             <button onClick={() => setMobileSidebar(true)} className="md:hidden p-2 rounded-xl hover:bg-muted">
               <Menu size={20} />
+            </button>
+            <button
+              onClick={() => setCollapsed(c => !c)}
+              className="hidden md:flex p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              title={collapsed ? 'Expand' : 'Collapse'}
+            >
+              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
           </div>
           <div className="flex items-center gap-2">
@@ -124,16 +145,17 @@ export default function AppLayout() {
                 {pendingSync > 0 && <span className="bg-amber-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>}
               </div>
             ) : pendingSync > 0 ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 text-xs font-semibold" title="সিঙ্ক হচ্ছে...">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold" title="সিঙ্ক হচ্ছে...">
                 <CloudOff size={14} className="animate-pulse" />
                 <span className="hidden sm:inline">{state.language === 'bn' ? 'সিঙ্ক হচ্ছে' : 'Syncing'}</span>
-                <span className="bg-blue-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>
+                <span className="bg-primary text-primary-foreground rounded-full px-1.5 text-[10px]">{pendingSync}</span>
               </div>
             ) : null}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => openQuickAdd()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-sm hover:shadow-md transition-shadow"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-primary-foreground font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              style={{ background: 'var(--gradient-primary)' }}
             >
               <Plus size={18} />
               <span className="hidden sm:inline">{t('addTransaction')}</span>

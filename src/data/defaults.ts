@@ -29,6 +29,7 @@ export const DEFAULT_WALLETS: Wallet[] = [
 // Available fonts
 export const FONTS = {
   bn: [
+    { name: 'Tiro Bangla + Poppins', value: "'Tiro Bangla', 'Poppins', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Poppins:wght@300;400;500;600;700;800&display=swap' },
     { name: 'Tiro Bangla', value: "'Tiro Bangla', serif", url: 'https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&display=swap' },
     { name: 'Noto Sans Bengali', value: "'Noto Sans Bengali', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap' },
     { name: 'Hind Siliguri', value: "'Hind Siliguri', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap' },
@@ -36,8 +37,8 @@ export const FONTS = {
     { name: 'Anek Bangla', value: "'Anek Bangla', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700&display=swap' },
   ],
   en: [
-    { name: 'Inter', value: "'Inter', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' },
     { name: 'Poppins', value: "'Poppins', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap' },
+    { name: 'Inter', value: "'Inter', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' },
     { name: 'Nunito', value: "'Nunito', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap' },
     { name: 'Roboto', value: "'Roboto', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap' },
     { name: 'Space Grotesk', value: "'Space Grotesk', sans-serif", url: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap' },
