@@ -201,7 +201,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isGuest, state.wallets, state.isDark]);
 
-  // Online/offline detection + auto-flush queue when back online
+  // Online/offline detection + auto-flush queue + visibility-based refetch
   const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [pendingSync, setPendingSync] = useState<number>(0);
 
@@ -209,20 +209,31 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const updatePending = () => { if (user && !isGuest) setPendingSync(getQueue(user.id).length); };
     if (user && !isGuest) updatePending(); else setPendingSync(0);
 
+    const refetch = async () => {
+      if (!user || isGuest) return;
+      try {
+        const data = await loadUserData(user.id);
+        dispatch({ type: 'SET_STATE', payload: data });
+        try { localStorage.setItem(`mm-cache-${user.id}`, JSON.stringify(data)); } catch {}
+      } catch {}
+    };
+
     const onOnline = async () => {
       setIsOnline(true);
       if (user && !isGuest) {
         await flushQueue(user.id);
         updatePending();
-        try {
-          const data = await loadUserData(user.id);
-          dispatch({ type: 'SET_STATE', payload: data });
-        } catch {}
+        await refetch();
       }
     };
     const onOffline = () => setIsOnline(false);
+    const onVisible = () => { if (document.visibilityState === 'visible' && navigator.onLine) refetch(); };
+    const onFocus = () => { if (navigator.onLine) refetch(); };
+
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisible);
     const id = window.setInterval(updatePending, 3000);
 
     if (user && !isGuest && navigator.onLine && getQueue(user.id).length > 0) {
@@ -232,6 +243,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisible);
       window.clearInterval(id);
     };
   }, [user, isGuest]);
