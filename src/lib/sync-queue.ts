@@ -121,14 +121,17 @@ export async function executeAction(userId: string, action: SyncAction): Promise
 export async function flushQueue(userId: string): Promise<{ success: number; remaining: number }> {
   const q = getQueue(userId);
   if (q.length === 0) return { success: 0, remaining: 0 };
+  // Conflict-safe ordering: stable sort by timestamp ascending (earliest first)
+  // Last write per resource will naturally win since we process in time order.
+  const ordered = [...q].sort((a, b) => a.ts - b.ts);
   let success = 0;
-  const remaining: SyncAction[] = [];
-  for (const action of q) {
+  const remaining: QueuedItem[] = [];
+  for (const item of ordered) {
     try {
-      await executeAction(userId, action);
+      await executeAction(userId, item.action);
       success++;
     } catch (e) {
-      remaining.push(action);
+      remaining.push(item);
     }
   }
   setQueue(userId, remaining);
