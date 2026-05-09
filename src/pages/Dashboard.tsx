@@ -17,12 +17,14 @@ export default function Dashboard() {
   const { openQuickAdd } = useOutletContext<{ openQuickAdd: (catId?: string) => void }>();
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Guest';
-  const greeting = (() => {
+  const { greeting, WeatherIcon, weatherTint } = useMemo(() => {
     const h = new Date().getHours();
-    if (h < 12) return t('goodMorning');
-    if (h < 17) return t('goodAfternoon');
-    return t('goodEvening');
-  })();
+    if (h >= 5 && h < 11) return { greeting: t('goodMorning'), WeatherIcon: Sunrise, weatherTint: 'from-amber-400 to-orange-500' };
+    if (h >= 11 && h < 15) return { greeting: t('goodAfternoon'), WeatherIcon: Sun, weatherTint: 'from-yellow-400 to-amber-500' };
+    if (h >= 15 && h < 18) return { greeting: t('goodAfternoon'), WeatherIcon: CloudSun, weatherTint: 'from-orange-400 to-pink-500' };
+    if (h >= 18 && h < 20) return { greeting: t('goodEvening'), WeatherIcon: Sunset, weatherTint: 'from-rose-500 to-purple-600' };
+    return { greeting: t('goodEvening'), WeatherIcon: Moon, weatherTint: 'from-indigo-500 to-purple-700' };
+  }, [t]);
 
   const recentTransactions = state.transactions.slice(0, 5);
 
@@ -39,9 +41,19 @@ export default function Dashboard() {
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       {/* Greeting */}
       <motion.div variants={itemVariants} className="flex items-center justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-bold">{t('hello')}, {displayName}!</h1>
-          <p className="text-muted-foreground text-sm">{greeting}</p>
+        <div className="flex items-center gap-3">
+          <motion.div
+            initial={{ rotate: -10, scale: 0.8 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 12 }}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg bg-gradient-to-br ${weatherTint}`}
+          >
+            <WeatherIcon size={22} strokeWidth={2.2} />
+          </motion.div>
+          <div>
+            <h1 className="text-2xl font-bold leading-tight">{t('hello')}, {displayName}!</h1>
+            <p className="text-muted-foreground text-sm">{greeting}</p>
+          </div>
         </div>
       </motion.div>
 
