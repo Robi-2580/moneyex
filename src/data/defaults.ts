@@ -2,7 +2,7 @@ import { Category, Wallet } from '@/types';
 
 export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-food', name: 'Food', nameBn: 'খাবার', type: 'expense', icon: '🍔', color: '#EF4444', isDefault: true },
-  { id: 'cat-transport', name: 'Transport', nameBn: 'যাতায়াত', type: 'expense', icon: '🚗', color: '#3B82F6', isDefault: true },
+  { id: 'cat-transport', name: 'Transport', nameBn: 'যাতায়াত', type: 'expense', icon: '🚗', color: '#14B8A6', isDefault: true },
   { id: 'cat-shopping', name: 'Shopping', nameBn: 'শপিং', type: 'expense', icon: '🛍️', color: '#8B5CF6', isDefault: true },
   { id: 'cat-bills', name: 'Bills', nameBn: 'বিল', type: 'expense', icon: '📄', color: '#F59E0B', isDefault: true },
   { id: 'cat-health', name: 'Health', nameBn: 'স্বাস্থ্য', type: 'expense', icon: '💊', color: '#10B981', isDefault: true },
