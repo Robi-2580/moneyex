@@ -98,8 +98,8 @@ export default function AppLayout() {
   return (
     <div className="h-screen flex overflow-hidden bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-60 border-r border-border bg-card shrink-0">
-        <SidebarContent />
+      <aside className={`hidden md:flex flex-col border-r border-border bg-sidebar shrink-0 transition-[width] duration-300 ease-in-out ${collapsed ? 'w-[68px]' : 'w-60'}`}>
+        <SidebarContent isCollapsed={collapsed} />
       </aside>
 
       {/* Mobile Sidebar Overlay */}
@@ -112,7 +112,7 @@ export default function AppLayout() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute left-0 top-0 bottom-0 w-64 bg-card border-r border-border flex flex-col"
+              className="absolute left-0 top-0 bottom-0 w-64 bg-sidebar border-r border-border flex flex-col"
             >
               <SidebarContent onNavigate={() => setMobileSidebar(false)} />
             </motion.aside>
@@ -123,10 +123,17 @@ export default function AppLayout() {
       {/* Main Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 lg:px-6 shrink-0">
-          <div className="flex items-center gap-3">
+        <header className="h-14 border-b border-border bg-card/80 backdrop-blur-md flex items-center justify-between px-4 lg:px-6 shrink-0">
+          <div className="flex items-center gap-2">
             <button onClick={() => setMobileSidebar(true)} className="md:hidden p-2 rounded-xl hover:bg-muted">
               <Menu size={20} />
+            </button>
+            <button
+              onClick={() => setCollapsed(c => !c)}
+              className="hidden md:flex p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              title={collapsed ? 'Expand' : 'Collapse'}
+            >
+              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
           </div>
           <div className="flex items-center gap-2">
