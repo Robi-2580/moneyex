@@ -145,16 +145,17 @@ export default function AppLayout() {
                 {pendingSync > 0 && <span className="bg-amber-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>}
               </div>
             ) : pendingSync > 0 ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 text-xs font-semibold" title="সিঙ্ক হচ্ছে...">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold" title="সিঙ্ক হচ্ছে...">
                 <CloudOff size={14} className="animate-pulse" />
                 <span className="hidden sm:inline">{state.language === 'bn' ? 'সিঙ্ক হচ্ছে' : 'Syncing'}</span>
-                <span className="bg-blue-500 text-white rounded-full px-1.5 text-[10px]">{pendingSync}</span>
+                <span className="bg-primary text-primary-foreground rounded-full px-1.5 text-[10px]">{pendingSync}</span>
               </div>
             ) : null}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => openQuickAdd()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-sm hover:shadow-md transition-shadow"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-primary-foreground font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              style={{ background: 'var(--gradient-primary)' }}
             >
               <Plus size={18} />
               <span className="hidden sm:inline">{t('addTransaction')}</span>
