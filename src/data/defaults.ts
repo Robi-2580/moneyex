@@ -6,7 +6,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-shopping', name: 'Shopping', nameBn: 'শপিং', type: 'expense', icon: '🛍️', color: '#8B5CF6', isDefault: true },
   { id: 'cat-bills', name: 'Bills', nameBn: 'বিল', type: 'expense', icon: '📄', color: '#F59E0B', isDefault: true },
   { id: 'cat-health', name: 'Health', nameBn: 'স্বাস্থ্য', type: 'expense', icon: '💊', color: '#10B981', isDefault: true },
-  { id: 'cat-education', name: 'Education', nameBn: 'শিক্ষা', type: 'expense', icon: '📚', color: '#6366F1', isDefault: true },
+  { id: 'cat-education', name: 'Education', nameBn: 'শিক্ষা', type: 'expense', icon: '📚', color: '#A855F7', isDefault: true },
   { id: 'cat-entertainment', name: 'Entertainment', nameBn: 'বিনোদন', type: 'expense', icon: '🎮', color: '#EC4899', isDefault: true },
   { id: 'cat-restaurant', name: 'Restaurant', nameBn: 'রেস্তোরাঁ', type: 'expense', icon: '🍽️', color: '#F97316', isDefault: true },
   { id: 'cat-family', name: 'Family', nameBn: 'পরিবার', type: 'expense', icon: '👨‍👩‍👧', color: '#14B8A6', isDefault: true },
