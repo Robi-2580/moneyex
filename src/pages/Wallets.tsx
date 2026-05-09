@@ -10,7 +10,7 @@ const walletTypes = [
   { value: 'mobile', label: 'Mobile Banking', icon: '📱' },
 ] as const;
 
-const walletColors = ['#22C55E', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899', '#EF4444'];
+const walletColors = ['#22C55E', '#A855F7', '#8B5CF6', '#F59E0B', '#EC4899', '#EF4444'];
 
 export default function Wallets() {
   const { state, dispatch } = useApp();
