@@ -14,7 +14,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-wifi', name: 'Wifi Bill', nameBn: 'ওয়াইফাই বিল', type: 'expense', icon: '📶', color: '#0EA5A4', isDefault: true },
   { id: 'cat-mobile-bill', name: 'Mobile bill', nameBn: 'মোবাইল বিল', type: 'expense', icon: '📱', color: '#F43F5E', isDefault: true },
   { id: 'cat-salary', name: 'Salary', nameBn: 'বেতন', type: 'income', icon: '💰', color: '#22C55E', isDefault: true },
-  { id: 'cat-freelance', name: 'Freelance', nameBn: 'ফ্রিল্যান্স', type: 'income', icon: '💻', color: '#3B82F6', isDefault: true },
+  { id: 'cat-freelance', name: 'Freelance', nameBn: 'ফ্রিল্যান্স', type: 'income', icon: '💻', color: '#A855F7', isDefault: true },
   { id: 'cat-investment', name: 'Investment', nameBn: 'বিনিয়োগ', type: 'income', icon: '📈', color: '#F59E0B', isDefault: true },
   { id: 'cat-gift', name: 'Gift', nameBn: 'উপহার', type: 'income', icon: '🎁', color: '#EC4899', isDefault: true },
   { id: 'cat-other-income', name: 'Other', nameBn: 'অন্যান্য', type: 'income', icon: '💵', color: '#6B7280', isDefault: true },
