@@ -43,46 +43,53 @@ export default function AppLayout() {
     setShowAdd(true);
   };
 
-  const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
+  const SidebarContent = ({ onNavigate, isCollapsed = false }: { onNavigate?: () => void; isCollapsed?: boolean }) => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-border shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">FC</div>
-        <h1 className="text-base font-bold whitespace-nowrap">Finance Control</h1>
+      <div className={`flex items-center gap-3 px-4 h-16 border-b border-border shrink-0 ${isCollapsed ? 'justify-center px-2' : ''}`}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md" style={{ background: 'var(--gradient-primary)' }}>FC</div>
+        {!isCollapsed && <h1 className="text-base font-bold whitespace-nowrap gradient-text">Finance Control</h1>}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-3 px-3 space-y-0.5 overflow-y-auto">
+      <nav className={`flex-1 py-3 ${isCollapsed ? 'px-2' : 'px-3'} space-y-1 overflow-y-auto`}>
         {sidebarItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
             onClick={onNavigate}
+            title={isCollapsed ? label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-              ${isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`
+              `flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-xl text-sm font-medium transition-all relative group
+              ${isActive
+                ? 'bg-primary/10 text-primary shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:w-1 before:rounded-r-full before:bg-primary'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'}`
             }
           >
             <Icon size={18} className="shrink-0" />
-            <span>{label}</span>
+            {!isCollapsed && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
 
       {/* User section */}
       <div className="border-t border-border p-3">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-2 py-2`}>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md shrink-0" style={{ background: 'var(--gradient-primary)' }}>
             {displayName[0]?.toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate">{displayName}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email || 'Guest Mode'}</p>
-          </div>
-          <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')}>
-            <LogOut size={16} />
-          </button>
+          {!isCollapsed && (
+            <>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{displayName}</p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email || 'Guest Mode'}</p>
+              </div>
+              <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')}>
+                <LogOut size={16} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </>
