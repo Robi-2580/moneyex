@@ -22,19 +22,31 @@ export type SyncAction =
   | { type: 'SET_FONT'; payload: string }
   | { type: 'WALLET_BALANCE'; payload: { walletId: string; balance: number } };
 
-const queueKey = (uid: string) => `mm-sync-queue-${uid}`;
-
-export function getQueue(userId: string): SyncAction[] {
-  try { return JSON.parse(localStorage.getItem(queueKey(userId)) || '[]'); } catch { return []; }
+export interface QueuedItem {
+  id: string;
+  ts: number;
+  action: SyncAction;
 }
 
-export function setQueue(userId: string, q: SyncAction[]) {
+const queueKey = (uid: string) => `mm-sync-queue-${uid}`;
+
+export function getQueue(userId: string): QueuedItem[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(queueKey(userId)) || '[]');
+    // Backwards compat: old queue stored bare actions
+    return raw.map((it: any) =>
+      it && it.action ? it : { id: crypto.randomUUID(), ts: Date.now(), action: it }
+    );
+  } catch { return []; }
+}
+
+export function setQueue(userId: string, q: QueuedItem[]) {
   try { localStorage.setItem(queueKey(userId), JSON.stringify(q)); } catch { }
 }
 
 export function enqueue(userId: string, action: SyncAction) {
   const q = getQueue(userId);
-  q.push(action);
+  q.push({ id: crypto.randomUUID(), ts: Date.now(), action });
   setQueue(userId, q);
 }
 
