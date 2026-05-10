@@ -78,7 +78,7 @@ export default function LoginPage() {
             <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-lg flex items-center justify-center text-4xl mx-auto mb-6 shadow-2xl border border-white/20">
               💰
             </div>
-            <h1 className="text-4xl font-extrabold mb-3 tracking-tight">Finance Control</h1>
+            <h1 className="text-4xl font-extrabold mb-3 tracking-tight">PaysaPro</h1>
             <p className="text-lg opacity-90 font-medium mb-2">আপনার আর্থিক ব্যবস্থাপনার সেরা সমাধান</p>
             <p className="text-sm opacity-60 mb-10">Premium Money Manager by Robi</p>
           </motion.div>
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl mx-auto mb-3">
               💰
             </div>
-            <h1 className="text-2xl font-extrabold text-foreground">Finance Control</h1>
+            <h1 className="text-2xl font-extrabold text-foreground">PaysaPro</h1>
             <p className="text-xs text-muted-foreground mt-1">Premium Money Manager by Robi</p>
           </div>
 

@@ -163,7 +163,7 @@ export default function SettingsPage() {
                   }`}
                 >
                   <span style={{ fontFamily: font.value }} className="font-semibold text-sm">
-                    {font.name} — <span className="font-normal">Finance Control App</span>
+                    {font.name} — <span className="font-normal">PaysaPro App</span>
                   </span>
                   {state.fontFamily === font.value && <span className="text-primary text-xs">✓</span>}
                 </button>
@@ -218,7 +218,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <p className="font-bold text-sm">Robi</p>
-            <p className="text-xs text-muted-foreground">Developer · Finance Control</p>
+            <p className="text-xs text-muted-foreground">Developer · PaysaPro</p>
           </div>
         </div>
         <div className="space-y-1.5 mb-3">
