@@ -184,7 +184,9 @@ export default function AppLayout() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                <Outlet context={{ openQuickAdd }} />
+                <ErrorBoundary resetKey={location.pathname}>
+                  <Outlet context={{ openQuickAdd }} />
+                </ErrorBoundary>
               </motion.div>
             </AnimatePresence>
           </div>
