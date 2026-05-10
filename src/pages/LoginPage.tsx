@@ -264,9 +264,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground mt-5 opacity-70">
-            Developer: Robi · WhatsApp: 01726782512
-          </p>
         </motion.div>
       </div>
     </div>
