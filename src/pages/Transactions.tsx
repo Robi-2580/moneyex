@@ -47,7 +47,7 @@ export default function Transactions() {
     return Array.from(map.entries());
   }, [filtered]);
 
-  if (isLoading && state.transactions.length === 0) return <PageSkeleton rows={6} />;
+  const showSkeleton = isLoading && state.transactions.length === 0;
 
   return (
     <div className="py-4 space-y-4">
