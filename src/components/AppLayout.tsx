@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function AppLayout() {
   const [showAdd, setShowAdd] = useState(false);
@@ -183,7 +184,9 @@ export default function AppLayout() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                <Outlet context={{ openQuickAdd }} />
+                <ErrorBoundary resetKey={location.pathname}>
+                  <Outlet context={{ openQuickAdd }} />
+                </ErrorBoundary>
               </motion.div>
             </AnimatePresence>
           </div>

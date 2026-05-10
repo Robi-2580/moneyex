@@ -2,13 +2,22 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { Transaction } from '@/types';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 import SwipeableTransaction from '@/components/SwipeableTransaction';
+import PageSkeleton from '@/components/PageSkeleton';
+
+const safeFormatDate = (d: string) => {
+  try {
+    const dt = new Date(d);
+    if (!isValid(dt)) return d || '—';
+    return format(dt, 'EEEE, MMM d, yyyy');
+  } catch { return d || '—'; }
+};
 
 export default function Transactions() {
-  const { state, dispatch, getCategory, getWallet } = useApp();
+  const { state, dbDispatch, getCategory, getWallet, isLoading } = useApp();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
   const [editTxn, setEditTxn] = useState<Transaction | null>(null);
@@ -37,6 +46,8 @@ export default function Transactions() {
     });
     return Array.from(map.entries());
   }, [filtered]);
+
+  if (isLoading && state.transactions.length === 0) return <PageSkeleton rows={6} />;
 
   return (
     <div className="py-4 space-y-4">
@@ -71,7 +82,7 @@ export default function Transactions() {
       ) : (
         grouped.map(([date, txns]) => (
           <div key={date}>
-            <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">{format(new Date(date), 'EEEE, MMM d, yyyy')}</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">{safeFormatDate(date)}</p>
             <div className="space-y-2">
               {txns.map((txn, i) => {
                 const cat = getCategory(txn.categoryId);
@@ -80,7 +91,7 @@ export default function Transactions() {
                   <SwipeableTransaction
                     key={txn.id}
                     onEdit={() => setEditTxn(txn)}
-                    onDelete={() => dispatch({ type: 'DELETE_TRANSACTION', payload: txn })}
+                    onDelete={() => dbDispatch({ type: 'DELETE_TRANSACTION', payload: txn })}
                   >
                     <motion.div
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
