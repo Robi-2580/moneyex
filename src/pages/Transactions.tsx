@@ -47,6 +47,8 @@ export default function Transactions() {
     return Array.from(map.entries());
   }, [filtered]);
 
+  if (isLoading && state.transactions.length === 0) return <PageSkeleton rows={6} />;
+
   return (
     <div className="py-4 space-y-4">
       <h2 className="text-xl font-bold">Transactions</h2>
