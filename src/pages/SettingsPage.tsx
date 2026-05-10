@@ -90,7 +90,8 @@ export default function SettingsPage() {
 
         const safe: any = { wallets, categories, transactions, budgets, loans };
         if (isStr(raw.language) && (raw.language === 'bn' || raw.language === 'en')) safe.language = raw.language;
-        if (isStr(raw.fontFamily) && raw.fontFamily.length < 200) safe.fontFamily = raw.fontFamily;
+        const allowedFonts = [...FONTS.bn, ...FONTS.en].map(f => f.value);
+        if (isStr(raw.fontFamily) && allowedFonts.includes(raw.fontFamily)) safe.fontFamily = raw.fontFamily;
         if (typeof raw.isDark === 'boolean') safe.isDark = raw.isDark;
 
         dispatch({ type: 'SET_STATE', payload: safe });
