@@ -49,7 +49,7 @@ export default function AppLayout() {
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 h-16 border-b border-border shrink-0 ${isCollapsed ? 'justify-center px-2' : ''}`}>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md" style={{ background: 'var(--gradient-primary)' }}>FC</div>
-        {!isCollapsed && <h1 className="text-base font-bold whitespace-nowrap gradient-text">Finance Control</h1>}
+        {!isCollapsed && <h1 className="text-base font-bold whitespace-nowrap gradient-text">PaysaPro</h1>}
       </div>
 
       {/* Nav */}
