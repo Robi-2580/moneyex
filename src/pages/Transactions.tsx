@@ -2,13 +2,22 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { Transaction } from '@/types';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 import SwipeableTransaction from '@/components/SwipeableTransaction';
+import PageSkeleton from '@/components/PageSkeleton';
+
+const safeFormatDate = (d: string) => {
+  try {
+    const dt = new Date(d);
+    if (!isValid(dt)) return d || '—';
+    return format(dt, 'EEEE, MMM d, yyyy');
+  } catch { return d || '—'; }
+};
 
 export default function Transactions() {
-  const { state, dispatch, getCategory, getWallet } = useApp();
+  const { state, dbDispatch, getCategory, getWallet, isLoading } = useApp();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
   const [editTxn, setEditTxn] = useState<Transaction | null>(null);
