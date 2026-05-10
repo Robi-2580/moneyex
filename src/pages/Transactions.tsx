@@ -74,7 +74,9 @@ export default function Transactions() {
       <p className="text-xs text-muted-foreground text-center">← Swipe left to delete · Swipe right to edit →</p>
 
       {/* List */}
-      {grouped.length === 0 ? (
+      {showSkeleton ? (
+        <PageSkeleton rows={5} />
+      ) : grouped.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-4xl mb-2">🔍</p>
           <p className="text-muted-foreground">No transactions found</p>
