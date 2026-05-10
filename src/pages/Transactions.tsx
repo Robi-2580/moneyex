@@ -82,7 +82,7 @@ export default function Transactions() {
       ) : (
         grouped.map(([date, txns]) => (
           <div key={date}>
-            <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">{format(new Date(date), 'EEEE, MMM d, yyyy')}</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-2 px-1">{safeFormatDate(date)}</p>
             <div className="space-y-2">
               {txns.map((txn, i) => {
                 const cat = getCategory(txn.categoryId);
