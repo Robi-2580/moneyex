@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function AppLayout() {
   const [showAdd, setShowAdd] = useState(false);
