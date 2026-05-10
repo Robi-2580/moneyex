@@ -113,6 +113,7 @@ interface AppContextType {
   dbDispatch: (action: Action) => Promise<void>;
   isOnline: boolean;
   pendingSync: number;
+  isLoading: boolean;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
