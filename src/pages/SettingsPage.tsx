@@ -61,10 +61,39 @@ export default function SettingsPage() {
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
+      // Limit file size to 5MB to prevent abuse
+      if (file.size > 5 * 1024 * 1024) { alert('File too large (max 5MB)'); return; }
       const text = await file.text();
       try {
-        const data = JSON.parse(text);
-        dispatch({ type: 'SET_STATE', payload: data });
+        const raw = JSON.parse(text);
+        // Lightweight schema validation — only accept known shape
+        const isStr = (v: unknown) => typeof v === 'string';
+        const isNum = (v: unknown) => typeof v === 'number' && Number.isFinite(v);
+        const isArr = Array.isArray;
+        const validWallet = (w: any) => w && isStr(w.id) && isStr(w.name) && isNum(w.balance);
+        const validCategory = (c: any) => c && isStr(c.id) && isStr(c.name) && isStr(c.type);
+        const validTxn = (t: any) => t && isStr(t.id) && isNum(t.amount) && isStr(t.type) && isStr(t.date);
+        const validBudget = (b: any) => b && isStr(b.id) && isNum(b.amount);
+        const validLoan = (l: any) => l && isStr(l.id) && isStr(l.personName) && isNum(l.amount);
+
+        if (!raw || typeof raw !== 'object') throw new Error('Invalid root');
+        const wallets = isArr(raw.wallets) ? raw.wallets.filter(validWallet).slice(0, 500) : [];
+        const categories = isArr(raw.categories) ? raw.categories.filter(validCategory).slice(0, 500) : [];
+        const transactions = isArr(raw.transactions) ? raw.transactions.filter(validTxn).slice(0, 10000) : [];
+        const budgets = isArr(raw.budgets) ? raw.budgets.filter(validBudget).slice(0, 500) : [];
+        const loans = isArr(raw.loans) ? raw.loans.filter(validLoan).slice(0, 500) : [];
+
+        if (!wallets.length && !categories.length && !transactions.length && !budgets.length && !loans.length) {
+          alert('Invalid backup format — no recognizable data found');
+          return;
+        }
+
+        const safe: any = { wallets, categories, transactions, budgets, loans };
+        if (isStr(raw.language) && (raw.language === 'bn' || raw.language === 'en')) safe.language = raw.language;
+        if (isStr(raw.fontFamily) && raw.fontFamily.length < 200) safe.fontFamily = raw.fontFamily;
+        if (typeof raw.isDark === 'boolean') safe.isDark = raw.isDark;
+
+        dispatch({ type: 'SET_STATE', payload: safe });
         alert('Data imported successfully!');
       } catch {
         alert('Invalid file format');
