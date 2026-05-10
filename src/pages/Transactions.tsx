@@ -89,7 +89,7 @@ export default function Transactions() {
                   <SwipeableTransaction
                     key={txn.id}
                     onEdit={() => setEditTxn(txn)}
-                    onDelete={() => dispatch({ type: 'DELETE_TRANSACTION', payload: txn })}
+                    onDelete={() => dbDispatch({ type: 'DELETE_TRANSACTION', payload: txn })}
                   >
                     <motion.div
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
