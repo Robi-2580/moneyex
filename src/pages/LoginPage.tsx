@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield, Wallet, TrendingUp, BarChart3 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield, Wallet, TrendingUp, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
@@ -54,7 +54,7 @@ export default function LoginPage() {
       {/* Left Panel — Branding */}
       <div className="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden">
         {/* Gradient background */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(239 84% 57%), hsl(260 90% 50%), hsl(280 80% 55%))' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(0 0% 12%), hsl(0 0% 22%), hsl(0 75% 45%))' }} />
         
         {/* Decorative circles */}
         <div className="absolute inset-0 overflow-hidden">
@@ -75,8 +75,8 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-lg flex items-center justify-center text-4xl mx-auto mb-6 shadow-2xl border border-white/20">
-              💰
+            <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-lg flex items-center justify-center mx-auto mb-6 shadow-2xl border border-white/20">
+              <Wallet size={36} strokeWidth={2.2} className="text-white" />
             </div>
             <h1 className="text-4xl font-extrabold mb-3 tracking-tight">PaysaPro</h1>
             <p className="text-lg opacity-90 font-medium mb-2">আপনার আর্থিক ব্যবস্থাপনার সেরা সমাধান</p>
@@ -117,8 +117,8 @@ export default function LoginPage() {
         >
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl mx-auto mb-3">
-              💰
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <Wallet size={30} className="text-primary" strokeWidth={2.2} />
             </div>
             <h1 className="text-2xl font-extrabold text-foreground">PaysaPro</h1>
             <p className="text-xs text-muted-foreground mt-1">Premium Money Manager by Robi</p>
@@ -167,7 +167,7 @@ export default function LoginPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-destructive/10 text-destructive text-sm p-3 rounded-xl mb-4 flex items-center gap-2"
                   >
-                    <span className="text-lg">⚠️</span> {error}
+                    <AlertCircle size={16} /> {error}
                   </motion.div>
                 )}
 
@@ -175,9 +175,9 @@ export default function LoginPage() {
                   <motion.div
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-emerald-500/10 text-emerald-600 text-sm p-3 rounded-xl mb-4 flex items-center gap-2"
+                    className="bg-success/10 text-success text-sm p-3 rounded-xl mb-4 flex items-center gap-2"
                   >
-                    <span className="text-lg">✅</span> {success}
+                    <CheckCircle2 size={16} /> {success}
                   </motion.div>
                 )}
 
@@ -257,9 +257,9 @@ export default function LoginPage() {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={continueAsGuest}
-                className="w-full py-3 rounded-xl font-semibold text-muted-foreground hover:bg-muted/50 transition-all text-sm border border-dashed border-border"
+                className="w-full py-3 rounded-xl font-semibold text-muted-foreground hover:bg-muted/50 transition-all text-sm border border-dashed border-border flex items-center justify-center gap-2"
               >
-                👤 গেস্ট মোডে চালিয়ে যান
+                <User size={16} /> গেস্ট মোডে চালিয়ে যান
               </motion.button>
             </div>
           </div>
