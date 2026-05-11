@@ -7,6 +7,7 @@ import { Transaction } from '@/types';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 import SwipeableTransaction from '@/components/SwipeableTransaction';
 import PageSkeleton from '@/components/PageSkeleton';
+import { CategoryIcon } from '@/lib/icon-map';
 
 const safeFormatDate = (d: string) => {
   try {
