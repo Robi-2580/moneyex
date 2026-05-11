@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, X, AlertTriangle } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, AlertTriangle, Wallet as WalletIcon, ClipboardList } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Budget } from '@/types';
+import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Budgets() {
   const { state, dispatch, getCategory } = useApp();
@@ -68,7 +69,7 @@ export default function Budgets() {
 
       {budgets.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-4xl mb-2">📋</p>
+          <ClipboardList size={40} className="mx-auto mb-2 text-muted-foreground" />
           <p className="text-muted-foreground">No budgets set</p>
           <p className="text-muted-foreground text-xs mt-1">Set a monthly budget to track spending</p>
         </div>
@@ -84,7 +85,9 @@ export default function Budgets() {
                 transition={{ delay: i * 0.05 }} className="glass-card rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{cat?.icon || '💰'}</span>
+                    <span className="inline-flex w-9 h-9 rounded-xl items-center justify-center" style={{ backgroundColor: (cat?.color || '#6B7280') + '20', color: cat?.color || '#6B7280' }}>
+                      <CategoryIcon icon={cat?.icon || 'wallet'} size={18} />
+                    </span>
                     <div>
                       <p className="font-semibold text-sm">{cat?.name || 'Overall Budget'}</p>
                       <p className="text-xs text-muted-foreground">৳{spent.toLocaleString()} / ৳{b.amount.toLocaleString()}</p>
@@ -129,12 +132,13 @@ export default function Budgets() {
                   <div className="grid grid-cols-4 gap-2">
                     <button onClick={() => setCategoryId('')}
                       className={`flex flex-col items-center gap-1 p-2 rounded-2xl text-xs transition-all ${!categoryId ? 'bg-primary/10 ring-2 ring-primary' : 'bg-muted'}`}>
-                      <span className="text-xl">💰</span><span className="font-medium">Overall</span>
+                      <WalletIcon size={20} className="text-foreground" /><span className="font-medium">Overall</span>
                     </button>
                     {expenseCategories.map(cat => (
                       <button key={cat.id} onClick={() => setCategoryId(cat.id)}
                         className={`flex flex-col items-center gap-1 p-2 rounded-2xl text-xs transition-all ${categoryId === cat.id ? 'bg-primary/10 ring-2 ring-primary' : 'bg-muted'}`}>
-                        <span className="text-xl">{cat.icon}</span><span className="font-medium truncate w-full text-center">{cat.name}</span>
+                        <span style={{ color: cat.color }}><CategoryIcon icon={cat.icon} size={20} /></span>
+                        <span className="font-medium truncate w-full text-center">{cat.name}</span>
                       </button>
                     ))}
                   </div>
