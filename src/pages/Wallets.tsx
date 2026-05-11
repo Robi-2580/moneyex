@@ -3,14 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Wallet } from '@/types';
+import { CategoryIcon } from '@/lib/icon-map';
+import { ACCENT_COLORS } from '@/data/defaults';
 
 const walletTypes = [
-  { value: 'cash', label: 'Cash', icon: '💵' },
-  { value: 'bank', label: 'Bank', icon: '🏦' },
-  { value: 'mobile', label: 'Mobile Banking', icon: '📱' },
+  { value: 'cash', label: 'Cash', icon: 'cash' },
+  { value: 'bank', label: 'Bank', icon: 'bank' },
+  { value: 'mobile', label: 'Mobile Banking', icon: 'mobile' },
 ] as const;
 
-const walletColors = ['#22C55E', '#A855F7', '#8B5CF6', '#F59E0B', '#EC4899', '#EF4444'];
+const walletColors = ACCENT_COLORS;
 
 export default function Wallets() {
   const { state, dispatch } = useApp();
@@ -30,7 +32,7 @@ export default function Wallets() {
 
   const handleSave = () => {
     if (!name.trim()) return;
-    const icon = walletTypes.find(t => t.value === type)?.icon || '💵';
+    const icon = walletTypes.find(t => t.value === type)?.icon || 'cash';
     if (editing) {
       dispatch({ type: 'UPDATE_WALLET', payload: { ...editing, name, type, icon, color } });
     } else {
@@ -72,8 +74,8 @@ export default function Wallets() {
             transition={{ delay: i * 0.05 }}
             className="glass-card rounded-2xl p-4 flex items-center gap-3"
           >
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style={{ backgroundColor: w.color + '18' }}>
-              {w.icon}
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: w.color + '20', color: w.color }}>
+              <CategoryIcon icon={w.icon} size={22} />
             </div>
             <div className="flex-1">
               <p className="font-semibold">{w.name}</p>
@@ -106,10 +108,10 @@ export default function Wallets() {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Type</label>
                   <div className="flex gap-2">
-                    {walletTypes.map(t => (
-                      <button key={t.value} onClick={() => setType(t.value)}
-                        className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${type === t.value ? 'bg-primary text-primary-foreground shadow' : 'bg-muted'}`}>
-                        {t.icon} {t.label}
+                    {walletTypes.map(tw => (
+                      <button key={tw.value} onClick={() => setType(tw.value)}
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${type === tw.value ? 'bg-primary text-primary-foreground shadow' : 'bg-muted'}`}>
+                        <CategoryIcon icon={tw.icon} size={16} /> {tw.label}
                       </button>
                     ))}
                   </div>

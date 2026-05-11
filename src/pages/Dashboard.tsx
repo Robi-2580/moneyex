@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDownLeft, ArrowUpRight, Eye, EyeOff, ChevronRight, Sun, Sunrise, Sunset, Moon, CloudSun } from 'lucide-react';
+import { CategoryIcon } from '@/lib/icon-map';
 import { useState, useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
@@ -19,11 +20,11 @@ export default function Dashboard() {
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Guest';
   const { greeting, WeatherIcon, weatherTint } = useMemo(() => {
     const h = new Date().getHours();
-    if (h >= 5 && h < 11) return { greeting: t('goodMorning'), WeatherIcon: Sunrise, weatherTint: 'from-amber-400 to-orange-500' };
-    if (h >= 11 && h < 15) return { greeting: t('goodAfternoon'), WeatherIcon: Sun, weatherTint: 'from-yellow-400 to-amber-500' };
-    if (h >= 15 && h < 18) return { greeting: t('goodAfternoon'), WeatherIcon: CloudSun, weatherTint: 'from-orange-400 to-pink-500' };
-    if (h >= 18 && h < 20) return { greeting: t('goodEvening'), WeatherIcon: Sunset, weatherTint: 'from-rose-500 to-purple-600' };
-    return { greeting: t('goodEvening'), WeatherIcon: Moon, weatherTint: 'from-indigo-500 to-purple-700' };
+    if (h >= 5 && h < 11) return { greeting: t('goodMorning'), WeatherIcon: Sunrise, weatherTint: 'from-zinc-700 to-zinc-900' };
+    if (h >= 11 && h < 15) return { greeting: t('goodAfternoon'), WeatherIcon: Sun, weatherTint: 'from-red-500 to-red-700' };
+    if (h >= 15 && h < 18) return { greeting: t('goodAfternoon'), WeatherIcon: CloudSun, weatherTint: 'from-zinc-600 to-red-600' };
+    if (h >= 18 && h < 20) return { greeting: t('goodEvening'), WeatherIcon: Sunset, weatherTint: 'from-red-600 to-zinc-800' };
+    return { greeting: t('goodEvening'), WeatherIcon: Moon, weatherTint: 'from-zinc-800 to-black' };
   }, [t]);
 
   const recentTransactions = state.transactions.slice(0, 5);
@@ -150,8 +151,8 @@ export default function Dashboard() {
                         className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer"
                         onClick={() => navigate('/transactions')}
                       >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: (cat?.color || '#999') + '18' }}>
-                          {cat?.icon || '📦'}
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: (cat?.color || '#6B7280') + '20', color: cat?.color || '#6B7280' }}>
+                          <CategoryIcon icon={cat?.icon} size={18} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-sm">{cat ? catName(cat) : 'Unknown'}</p>

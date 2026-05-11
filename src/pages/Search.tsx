@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search as SearchIcon } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { format } from 'date-fns';
+import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Search() {
   const { state, getCategory, getWallet, t, catName } = useApp();
@@ -59,8 +60,8 @@ export default function Search() {
                 transition={{ delay: Math.min(i * 0.02, 0.3) }}
                 className="bg-card border border-border rounded-2xl p-3.5 flex items-center gap-3"
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: (cat?.color || '#999') + '18' }}>
-                  {cat?.icon || '📦'}
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: (cat?.color || '#6B7280') + '20', color: cat?.color || '#6B7280' }}>
+                  <CategoryIcon icon={cat?.icon} size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm">{cat ? catName(cat) : '—'}</p>

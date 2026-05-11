@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertTriangle } from 'lucide-react';
 
 interface State { hasError: boolean; error?: Error }
 
@@ -23,7 +24,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode; 
     if (this.state.hasError) {
       return (
         <div className="py-12 text-center space-y-3">
-          <p className="text-4xl">⚠️</p>
+          <AlertTriangle size={40} className="mx-auto text-destructive" />
           <p className="font-semibold">কিছু একটা সমস্যা হয়েছে</p>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">{this.state.error?.message || 'Unknown error'}</p>
           <button

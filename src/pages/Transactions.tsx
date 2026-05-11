@@ -7,6 +7,7 @@ import { Transaction } from '@/types';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
 import SwipeableTransaction from '@/components/SwipeableTransaction';
 import PageSkeleton from '@/components/PageSkeleton';
+import { CategoryIcon } from '@/lib/icon-map';
 
 const safeFormatDate = (d: string) => {
   try {
@@ -100,8 +101,8 @@ export default function Transactions() {
                       transition={{ delay: i * 0.03 }}
                       className="bg-card border border-border rounded-2xl p-3.5 flex items-center gap-3"
                     >
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: cat?.color + '18' }}>
-                        {cat?.icon || '📦'}
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: (cat?.color || '#6B7280') + '20', color: cat?.color || '#6B7280' }}>
+                        <CategoryIcon icon={cat?.icon} size={18} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm">{cat?.name}</p>

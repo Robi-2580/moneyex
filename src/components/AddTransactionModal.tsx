@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Transaction } from '@/types';
+import { CategoryIcon } from '@/lib/icon-map';
 
 interface Props {
   open: boolean;
@@ -103,7 +104,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
                   }`}
                   onClick={() => { setType(t); setCategoryId(''); }}
                 >
-                  {t === 'expense' ? '💸 Expense' : '💰 Income'}
+                  {t === 'expense' ? 'Expense' : 'Income'}
                 </button>
               ))}
             </div>
@@ -154,7 +155,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
                   className="w-full py-3 px-4 bg-muted rounded-2xl outline-none appearance-none font-medium focus:ring-2 focus:ring-primary/30"
                 >
                   {state.wallets.map(w => (
-                    <option key={w.id} value={w.id}>{w.icon} {w.name} (৳{w.balance.toLocaleString()})</option>
+                    <option key={w.id} value={w.id}>{w.name} (৳{w.balance.toLocaleString()})</option>
                   ))}
                 </select>
                 <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />

@@ -1,5 +1,6 @@
 import { useApp } from '@/context/AppContext';
 import { useState } from 'react';
+import { CategoryIcon } from '@/lib/icon-map';
 
 interface Props {
   onQuickAdd: (categoryId: string) => void;

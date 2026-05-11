@@ -1,29 +1,42 @@
 import { Category, Wallet } from '@/types';
 
+// Ash / grey + red palette — used app-wide for category/wallet accents
+export const ACCENT_COLORS = [
+  '#DC2626', // red-600
+  '#EF4444', // red-500
+  '#B91C1C', // red-700
+  '#F87171', // red-400
+  '#1F2937', // gray-800
+  '#374151', // gray-700
+  '#4B5563', // gray-600
+  '#6B7280', // gray-500
+  '#9CA3AF', // gray-400
+];
+
 export const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'cat-food', name: 'Food', nameBn: 'খাবার', type: 'expense', icon: '🍔', color: '#EF4444', isDefault: true },
-  { id: 'cat-transport', name: 'Transport', nameBn: 'যাতায়াত', type: 'expense', icon: '🚗', color: '#14B8A6', isDefault: true },
-  { id: 'cat-shopping', name: 'Shopping', nameBn: 'শপিং', type: 'expense', icon: '🛍️', color: '#8B5CF6', isDefault: true },
-  { id: 'cat-bills', name: 'Bills', nameBn: 'বিল', type: 'expense', icon: '📄', color: '#F59E0B', isDefault: true },
-  { id: 'cat-health', name: 'Health', nameBn: 'স্বাস্থ্য', type: 'expense', icon: '💊', color: '#10B981', isDefault: true },
-  { id: 'cat-education', name: 'Education', nameBn: 'শিক্ষা', type: 'expense', icon: '📚', color: '#A855F7', isDefault: true },
-  { id: 'cat-entertainment', name: 'Entertainment', nameBn: 'বিনোদন', type: 'expense', icon: '🎮', color: '#EC4899', isDefault: true },
-  { id: 'cat-restaurant', name: 'Restaurant', nameBn: 'রেস্তোরাঁ', type: 'expense', icon: '🍽️', color: '#F97316', isDefault: true },
-  { id: 'cat-family', name: 'Family', nameBn: 'পরিবার', type: 'expense', icon: '👨‍👩‍👧', color: '#14B8A6', isDefault: true },
-  { id: 'cat-groceries', name: 'Groceries/daily', nameBn: 'মুদি/দৈনিক', type: 'expense', icon: '🛒', color: '#84CC16', isDefault: true },
-  { id: 'cat-wifi', name: 'Wifi Bill', nameBn: 'ওয়াইফাই বিল', type: 'expense', icon: '📶', color: '#0EA5A4', isDefault: true },
-  { id: 'cat-mobile-bill', name: 'Mobile bill', nameBn: 'মোবাইল বিল', type: 'expense', icon: '📱', color: '#F43F5E', isDefault: true },
-  { id: 'cat-salary', name: 'Salary', nameBn: 'বেতন', type: 'income', icon: '💰', color: '#22C55E', isDefault: true },
-  { id: 'cat-freelance', name: 'Freelance', nameBn: 'ফ্রিল্যান্স', type: 'income', icon: '💻', color: '#A855F7', isDefault: true },
-  { id: 'cat-investment', name: 'Investment', nameBn: 'বিনিয়োগ', type: 'income', icon: '📈', color: '#F59E0B', isDefault: true },
-  { id: 'cat-gift', name: 'Gift', nameBn: 'উপহার', type: 'income', icon: '🎁', color: '#EC4899', isDefault: true },
-  { id: 'cat-other-income', name: 'Other', nameBn: 'অন্যান্য', type: 'income', icon: '💵', color: '#6B7280', isDefault: true },
-  { id: 'cat-other-expense', name: 'Other', nameBn: 'অন্যান্য', type: 'expense', icon: '📦', color: '#6B7280', isDefault: true },
+  { id: 'cat-food', name: 'Food', nameBn: 'খাবার', type: 'expense', icon: 'food', color: '#DC2626', isDefault: true },
+  { id: 'cat-transport', name: 'Transport', nameBn: 'যাতায়াত', type: 'expense', icon: 'transport', color: '#374151', isDefault: true },
+  { id: 'cat-shopping', name: 'Shopping', nameBn: 'শপিং', type: 'expense', icon: 'shopping', color: '#EF4444', isDefault: true },
+  { id: 'cat-bills', name: 'Bills', nameBn: 'বিল', type: 'expense', icon: 'bills', color: '#4B5563', isDefault: true },
+  { id: 'cat-health', name: 'Health', nameBn: 'স্বাস্থ্য', type: 'expense', icon: 'health', color: '#B91C1C', isDefault: true },
+  { id: 'cat-education', name: 'Education', nameBn: 'শিক্ষা', type: 'expense', icon: 'education', color: '#1F2937', isDefault: true },
+  { id: 'cat-entertainment', name: 'Entertainment', nameBn: 'বিনোদন', type: 'expense', icon: 'entertainment', color: '#F87171', isDefault: true },
+  { id: 'cat-restaurant', name: 'Restaurant', nameBn: 'রেস্তোরাঁ', type: 'expense', icon: 'restaurant', color: '#DC2626', isDefault: true },
+  { id: 'cat-family', name: 'Family', nameBn: 'পরিবার', type: 'expense', icon: 'family', color: '#6B7280', isDefault: true },
+  { id: 'cat-groceries', name: 'Groceries/daily', nameBn: 'মুদি/দৈনিক', type: 'expense', icon: 'groceries', color: '#374151', isDefault: true },
+  { id: 'cat-wifi', name: 'Wifi Bill', nameBn: 'ওয়াইফাই বিল', type: 'expense', icon: 'wifi', color: '#4B5563', isDefault: true },
+  { id: 'cat-mobile-bill', name: 'Mobile bill', nameBn: 'মোবাইল বিল', type: 'expense', icon: 'mobile', color: '#EF4444', isDefault: true },
+  { id: 'cat-salary', name: 'Salary', nameBn: 'বেতন', type: 'income', icon: 'salary', color: '#1F2937', isDefault: true },
+  { id: 'cat-freelance', name: 'Freelance', nameBn: 'ফ্রিল্যান্স', type: 'income', icon: 'freelance', color: '#374151', isDefault: true },
+  { id: 'cat-investment', name: 'Investment', nameBn: 'বিনিয়োগ', type: 'income', icon: 'investment', color: '#DC2626', isDefault: true },
+  { id: 'cat-gift', name: 'Gift', nameBn: 'উপহার', type: 'income', icon: 'gift', color: '#EF4444', isDefault: true },
+  { id: 'cat-other-income', name: 'Other', nameBn: 'অন্যান্য', type: 'income', icon: 'other', color: '#6B7280', isDefault: true },
+  { id: 'cat-other-expense', name: 'Other', nameBn: 'অন্যান্য', type: 'expense', icon: 'other', color: '#6B7280', isDefault: true },
 ];
 
 export const DEFAULT_WALLETS: Wallet[] = [
-  { id: 'wallet-cash', name: 'Cash', type: 'cash', balance: 0, icon: '💵', color: '#22C55E', createdAt: new Date().toISOString() },
-  { id: 'wallet-bank', name: 'Bank Account', type: 'bank', balance: 0, icon: '🏦', color: '#A855F7', createdAt: new Date().toISOString() },
+  { id: 'wallet-cash', name: 'Cash', type: 'cash', balance: 0, icon: 'cash', color: '#374151', createdAt: new Date().toISOString() },
+  { id: 'wallet-bank', name: 'Bank Account', type: 'bank', balance: 0, icon: 'bank', color: '#DC2626', createdAt: new Date().toISOString() },
 ];
 
 // Available fonts
