@@ -277,7 +277,7 @@ export default function SettingsPage() {
       </div>
 
       <p className="text-center text-xs text-muted-foreground pt-2">
-        {user && !isGuest ? '☁️ Cloud sync active' : '📱 Data stored locally'}
+        {user && !isGuest ? 'Cloud sync active' : 'Data stored locally'}
       </p>
     </div>
   );

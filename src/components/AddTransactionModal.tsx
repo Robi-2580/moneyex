@@ -104,7 +104,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
                   }`}
                   onClick={() => { setType(t); setCategoryId(''); }}
                 >
-                  {t === 'expense' ? '💸 Expense' : '💰 Income'}
+                  {t === 'expense' ? 'Expense' : 'Income'}
                 </button>
               ))}
             </div>

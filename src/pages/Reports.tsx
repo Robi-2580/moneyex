@@ -137,7 +137,7 @@ export default function Reports() {
 
       {filteredTxns.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-4xl mb-2">📊</p>
+          <BarChart3 size={40} className="mx-auto mb-2 text-muted-foreground" />
           <p className="text-muted-foreground">No data for this period</p>
           <p className="text-muted-foreground text-xs mt-1">Add some transactions to see reports</p>
         </div>
