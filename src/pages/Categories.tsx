@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Category } from '@/types';
+import { CategoryIcon, ICON_OPTIONS } from '@/lib/icon-map';
+import { ACCENT_COLORS } from '@/data/defaults';
 
-const iconOptions = ['🍔', '🚗', '🛍️', '📄', '💊', '📚', '🎮', '🏠', '☕', '✈️', '💰', '💻', '📈', '🎁', '💵', '📦', '🎵', '🏋️', '🎨', '🔧'];
-const colorOptions = ['#EF4444', '#A855F7', '#8B5CF6', '#F59E0B', '#10B981', '#0EA5A4', '#EC4899', '#14B8A6', '#F97316', '#6B7280'];
+const iconOptions = ICON_OPTIONS.map(o => o.key);
+const colorOptions = ACCENT_COLORS;
 
 export default function Categories() {
   const { state, dispatch } = useApp();
@@ -60,8 +62,8 @@ export default function Categories() {
             transition={{ delay: i * 0.03 }}
             className="glass-card rounded-2xl p-4 flex flex-col items-center text-center relative group"
           >
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-2" style={{ backgroundColor: cat.color + '18' }}>
-              {cat.icon}
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-2" style={{ backgroundColor: cat.color + '20', color: cat.color }}>
+              <CategoryIcon icon={cat.icon} size={22} />
             </div>
             <p className="font-semibold text-sm">{cat.name}</p>
             {!cat.isDefault && (
@@ -105,8 +107,8 @@ export default function Categories() {
                   <div className="flex flex-wrap gap-2">
                     {iconOptions.map(ic => (
                       <button key={ic} onClick={() => setIcon(ic)}
-                        className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${icon === ic ? 'bg-primary/10 ring-2 ring-primary' : 'bg-muted'}`}>
-                        {ic}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${icon === ic ? 'bg-primary/10 ring-2 ring-primary text-primary' : 'bg-muted text-foreground'}`}>
+                        <CategoryIcon icon={ic} size={18} />
                       </button>
                     ))}
                   </div>
