@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { CategoryIcon } from '@/lib/icon-map';
+import { BarChart3 } from 'lucide-react';
 
 export default function Reports() {
   const { state, getCategory } = useApp();
