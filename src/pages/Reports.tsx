@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Reports() {
   const { state, getCategory } = useApp();
@@ -39,7 +40,7 @@ export default function Reports() {
     });
     return Array.from(map.entries()).map(([catId, amount]) => {
       const cat = getCategory(catId);
-      return { name: cat?.name || 'Other', value: amount, color: cat?.color || '#6B7280', icon: cat?.icon || '📦' };
+      return { name: cat?.name || 'Other', value: amount, color: cat?.color || '#6B7280', icon: cat?.icon || 'other' };
     }).sort((a, b) => b.value - a.value);
   }, [filteredTxns, getCategory]);
 
@@ -106,7 +107,9 @@ export default function Reports() {
             {expenseByCategory.map(e => (
               <div key={e.name} className="flex items-center gap-1.5 text-xs">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: e.color }} />
-                <span className="text-muted-foreground">{e.icon} {e.name}</span>
+                <span className="text-muted-foreground inline-flex items-center gap-1" style={{ color: e.color }}>
+                  <CategoryIcon icon={e.icon} size={12} /> <span className="text-muted-foreground">{e.name}</span>
+                </span>
                 <span className="font-semibold">৳{e.value.toLocaleString()}</span>
               </div>
             ))}
@@ -125,8 +128,8 @@ export default function Reports() {
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip formatter={(value: number) => `৳${value.toLocaleString()}`} />
               <Legend />
-              <Bar dataKey="Income" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Expense" fill="hsl(0, 84%, 60%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Income" fill="hsl(0 0% 30%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Expense" fill="hsl(0 75% 50%)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
