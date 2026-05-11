@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Transaction } from '@/types';
+import { CategoryIcon } from '@/lib/icon-map';
 
 interface Props {
   open: boolean;
