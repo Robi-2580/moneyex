@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import { CategoryIcon } from '@/lib/icon-map';
 
 export default function AccountsOverview() {
   const { state, t } = useApp();
@@ -31,7 +32,9 @@ export default function AccountsOverview() {
             onClick={() => navigate('/wallets')}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-lg">{wallet.icon}</span>
+              <span className="inline-flex w-7 h-7 rounded-lg items-center justify-center" style={{ backgroundColor: (wallet.color || '#6B7280') + '20', color: wallet.color || '#6B7280' }}>
+                <CategoryIcon icon={wallet.icon} size={14} />
+              </span>
               <span className="text-[10px] text-muted-foreground">{walletTypeLabel(wallet.type)}</span>
             </div>
             <p className="font-bold text-base">৳{wallet.balance.toLocaleString()}</p>
