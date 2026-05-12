@@ -142,7 +142,8 @@ export default function SettingsPage() {
     { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
     { icon: Tag, label: t('categories'), desc: state.language === 'bn' ? 'আয় ও ব্যয়ের ক্যাটাগরি' : 'Manage categories', onClick: () => navigate('/categories') },
     { icon: Target, label: t('budgets'), desc: state.language === 'bn' ? 'মাসিক বাজেট সেট করুন' : 'Set monthly limits', onClick: () => navigate('/budgets') },
-    { icon: Download, label: t('exportData'), desc: state.language === 'bn' ? 'JSON ফাইলে ডাউনলোড করুন' : 'Download as JSON', onClick: exportData },
+    { icon: Download, label: t('exportData'), desc: state.language === 'bn' ? 'JSON ফাইলে সম্পূর্ণ ব্যাকআপ' : 'Full backup as JSON', onClick: exportData },
+    { icon: FileSpreadsheet, label: state.language === 'bn' ? 'CSV এক্সপোর্ট' : 'Export CSV', desc: state.language === 'bn' ? 'Excel-এ খোলার জন্য' : 'Open in Excel/Sheets', onClick: exportCSV },
     { icon: Upload, label: t('importData'), desc: state.language === 'bn' ? 'ব্যাকআপ থেকে পুনরুদ্ধার করুন' : 'Restore from backup', onClick: importData },
     { icon: Trash2, label: t('clearData'), desc: state.language === 'bn' ? 'সব ডাটা স্থায়ীভাবে মুছুন' : 'Delete everything', onClick: clearData, danger: true },
   ];
