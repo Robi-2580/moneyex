@@ -54,6 +54,30 @@ export default function SettingsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportCSV = () => {
+    const txns = state.transactions || [];
+    if (!txns.length) { alert(state.language === 'bn' ? 'কোনো লেনদেন নেই' : 'No transactions to export'); return; }
+    const catMap = new Map((state.categories || []).map((c: any) => [c.id, c.name]));
+    const walMap = new Map((state.wallets || []).map((w: any) => [w.id, w.name]));
+    const escape = (v: any) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = ['Date', 'Type', 'Amount', 'Category', 'Wallet', 'Note'];
+    const rows = txns.map((t: any) => [
+      t.date, t.type, t.amount,
+      catMap.get(t.categoryId) || '', walMap.get(t.walletId) || '', t.note || '',
+    ].map(escape).join(','));
+    const csv = '\ufeff' + [header.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const importData = () => {
     const input = document.createElement('input');
     input.type = 'file';
