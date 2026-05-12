@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail } from 'lucide-react';
+import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail, FileSpreadsheet } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { FONTS } from '@/data/defaults';
@@ -50,6 +50,30 @@ export default function SettingsPage() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `finance-control-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportCSV = () => {
+    const txns = state.transactions || [];
+    if (!txns.length) { alert(state.language === 'bn' ? 'কোনো লেনদেন নেই' : 'No transactions to export'); return; }
+    const catMap = new Map((state.categories || []).map((c: any) => [c.id, c.name]));
+    const walMap = new Map((state.wallets || []).map((w: any) => [w.id, w.name]));
+    const escape = (v: any) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = ['Date', 'Type', 'Amount', 'Category', 'Wallet', 'Note'];
+    const rows = txns.map((t: any) => [
+      t.date, t.type, t.amount,
+      catMap.get(t.categoryId) || '', walMap.get(t.walletId) || '', t.note || '',
+    ].map(escape).join(','));
+    const csv = '\ufeff' + [header.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -118,7 +142,8 @@ export default function SettingsPage() {
     { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
     { icon: Tag, label: t('categories'), desc: state.language === 'bn' ? 'আয় ও ব্যয়ের ক্যাটাগরি' : 'Manage categories', onClick: () => navigate('/categories') },
     { icon: Target, label: t('budgets'), desc: state.language === 'bn' ? 'মাসিক বাজেট সেট করুন' : 'Set monthly limits', onClick: () => navigate('/budgets') },
-    { icon: Download, label: t('exportData'), desc: state.language === 'bn' ? 'JSON ফাইলে ডাউনলোড করুন' : 'Download as JSON', onClick: exportData },
+    { icon: Download, label: t('exportData'), desc: state.language === 'bn' ? 'JSON ফাইলে সম্পূর্ণ ব্যাকআপ' : 'Full backup as JSON', onClick: exportData },
+    { icon: FileSpreadsheet, label: state.language === 'bn' ? 'CSV এক্সপোর্ট' : 'Export CSV', desc: state.language === 'bn' ? 'Excel-এ খোলার জন্য' : 'Open in Excel/Sheets', onClick: exportCSV },
     { icon: Upload, label: t('importData'), desc: state.language === 'bn' ? 'ব্যাকআপ থেকে পুনরুদ্ধার করুন' : 'Restore from backup', onClick: importData },
     { icon: Trash2, label: t('clearData'), desc: state.language === 'bn' ? 'সব ডাটা স্থায়ীভাবে মুছুন' : 'Delete everything', onClick: clearData, danger: true },
   ];
