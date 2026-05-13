@@ -291,6 +291,72 @@ export default function SettingsPage() {
         ))}
       </div>
 
+      {/* Vercel Deploy Guide */}
+      <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <button
+          onClick={() => setDeployOpen(!deployOpen)}
+          className="w-full flex items-center justify-between p-4 text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <Terminal size={20} />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">{state.language === 'bn' ? 'Vercel ডেপ্লয় গাইড' : 'Vercel Deploy Guide'}</p>
+              <p className="text-xs text-muted-foreground">{state.language === 'bn' ? 'Env variable কপি করুন' : 'Copy env variables'}</p>
+            </div>
+          </div>
+          <ChevronDown size={18} className={`text-muted-foreground transition-transform ${deployOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {deployOpen && (
+          <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
+            <p className="text-xs text-muted-foreground">
+              {state.language === 'bn'
+                ? 'Vercel Dashboard → Settings → Environment Variables-এ যোগ করুন'
+                : 'Add these in Vercel Dashboard → Settings → Environment Variables'}
+            </p>
+            {envVars.map((env) => (
+              <div key={env.key} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-primary">{env.key}</label>
+                  <button
+                    onClick={() => copyToClipboard(env.value, env.key)}
+                    className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {copiedKey === env.key ? <Check size={12} /> : <Copy size={12} />}
+                    {copiedKey === env.key ? (state.language === 'bn' ? 'কপি হয়েছে' : 'Copied!') : (state.language === 'bn' ? 'কপি' : 'Copy')}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    readOnly
+                    value={env.value}
+                    className="w-full text-xs bg-muted border border-border rounded-lg px-3 py-2 pr-16 font-mono text-foreground/80 focus:outline-none"
+                    onClick={(e) => (e.target as HTMLInputElement).select()}
+                  />
+                </div>
+              </div>
+            ))}
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => {
+                  const all = envVars.map(e => `${e.key}=${e.value}`).join('\n');
+                  copyToClipboard(all, 'all');
+                }}
+                className="flex-1 flex items-center justify-center gap-2 text-xs font-semibold py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                {copiedKey === 'all' ? <Check size={14} /> : <Copy size={14} />}
+                {copiedKey === 'all'
+                  ? (state.language === 'bn' ? 'সব কপি হয়েছে' : 'All copied!')
+                  : (state.language === 'bn' ? 'সব কপি করুন' : 'Copy all')}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Developer Info Card */}
       <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-5 mt-4">
         <div className="flex items-center gap-3 mb-3">
