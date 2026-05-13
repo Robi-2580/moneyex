@@ -140,6 +140,30 @@ export default function SettingsPage() {
     d({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
   };
 
+  const envVars = [
+    { key: 'VITE_SUPABASE_URL', value: 'https://ywoseprwnhmedujpjwvk.supabase.co' },
+    { key: 'VITE_SUPABASE_PUBLISHABLE_KEY', value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3NlcHJ3bmhtZWR1anBqd3ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzYzNjEsImV4cCI6MjA5MTExMjM2MX0.E9xbdL3sOGJ5xVk22vGrQHSnHhGQYprn7UEESotWTxE' },
+    { key: 'VITE_SUPABASE_PROJECT_ID', value: 'ywoseprwnhmedujpjwvk' },
+  ];
+
+  const copyToClipboard = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    }
+  };
+
   const menuItems = [
     { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
     { icon: Tag, label: t('categories'), desc: state.language === 'bn' ? 'আয় ও ব্যয়ের ক্যাটাগরি' : 'Manage categories', onClick: () => navigate('/categories') },
