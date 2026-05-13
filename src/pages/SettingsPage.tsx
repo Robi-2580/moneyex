@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail, FileSpreadsheet } from 'lucide-react';
+import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail, FileSpreadsheet, Terminal, Copy, Check } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { FONTS } from '@/data/defaults';
