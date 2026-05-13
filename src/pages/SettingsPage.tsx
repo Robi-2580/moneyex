@@ -11,6 +11,8 @@ export default function SettingsPage() {
   const { user, isGuest } = useAuth();
   const navigate = useNavigate();
   const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [deployOpen, setDeployOpen] = useState(false);
 
   const d = (action: any) => {
     if (user && !isGuest) {
