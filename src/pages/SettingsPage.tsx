@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail, FileSpreadsheet } from 'lucide-react';
+import { Tag, Target, Download, Upload, Trash2, Globe, Type, Cloud, ChevronDown, Facebook, Github, Linkedin, MessageCircle, Mail, FileSpreadsheet, Terminal, Copy, Check } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { FONTS } from '@/data/defaults';
@@ -11,6 +11,8 @@ export default function SettingsPage() {
   const { user, isGuest } = useAuth();
   const navigate = useNavigate();
   const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [deployOpen, setDeployOpen] = useState(false);
 
   const d = (action: any) => {
     if (user && !isGuest) {
@@ -138,6 +140,30 @@ export default function SettingsPage() {
     d({ type: 'SET_LANGUAGE', payload: state.language === 'bn' ? 'en' : 'bn' });
   };
 
+  const envVars = [
+    { key: 'VITE_SUPABASE_URL', value: 'https://ywoseprwnhmedujpjwvk.supabase.co' },
+    { key: 'VITE_SUPABASE_PUBLISHABLE_KEY', value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3NlcHJ3bmhtZWR1anBqd3ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzYzNjEsImV4cCI6MjA5MTExMjM2MX0.E9xbdL3sOGJ5xVk22vGrQHSnHhGQYprn7UEESotWTxE' },
+    { key: 'VITE_SUPABASE_PROJECT_ID', value: 'ywoseprwnhmedujpjwvk' },
+  ];
+
+  const copyToClipboard = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    }
+  };
+
   const menuItems = [
     { icon: Globe, label: t('language'), desc: state.language === 'bn' ? 'বাংলা → English' : 'English → বাংলা', onClick: toggleLanguage },
     { icon: Tag, label: t('categories'), desc: state.language === 'bn' ? 'আয় ও ব্যয়ের ক্যাটাগরি' : 'Manage categories', onClick: () => navigate('/categories') },
@@ -263,6 +289,72 @@ export default function SettingsPage() {
             </div>
           </motion.button>
         ))}
+      </div>
+
+      {/* Vercel Deploy Guide */}
+      <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <button
+          onClick={() => setDeployOpen(!deployOpen)}
+          className="w-full flex items-center justify-between p-4 text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <Terminal size={20} />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">{state.language === 'bn' ? 'Vercel ডেপ্লয় গাইড' : 'Vercel Deploy Guide'}</p>
+              <p className="text-xs text-muted-foreground">{state.language === 'bn' ? 'Env variable কপি করুন' : 'Copy env variables'}</p>
+            </div>
+          </div>
+          <ChevronDown size={18} className={`text-muted-foreground transition-transform ${deployOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {deployOpen && (
+          <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
+            <p className="text-xs text-muted-foreground">
+              {state.language === 'bn'
+                ? 'Vercel Dashboard → Settings → Environment Variables-এ যোগ করুন'
+                : 'Add these in Vercel Dashboard → Settings → Environment Variables'}
+            </p>
+            {envVars.map((env) => (
+              <div key={env.key} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-primary">{env.key}</label>
+                  <button
+                    onClick={() => copyToClipboard(env.value, env.key)}
+                    className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {copiedKey === env.key ? <Check size={12} /> : <Copy size={12} />}
+                    {copiedKey === env.key ? (state.language === 'bn' ? 'কপি হয়েছে' : 'Copied!') : (state.language === 'bn' ? 'কপি' : 'Copy')}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    readOnly
+                    value={env.value}
+                    className="w-full text-xs bg-muted border border-border rounded-lg px-3 py-2 pr-16 font-mono text-foreground/80 focus:outline-none"
+                    onClick={(e) => (e.target as HTMLInputElement).select()}
+                  />
+                </div>
+              </div>
+            ))}
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => {
+                  const all = envVars.map(e => `${e.key}=${e.value}`).join('\n');
+                  copyToClipboard(all, 'all');
+                }}
+                className="flex-1 flex items-center justify-center gap-2 text-xs font-semibold py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                {copiedKey === 'all' ? <Check size={14} /> : <Copy size={14} />}
+                {copiedKey === 'all'
+                  ? (state.language === 'bn' ? 'সব কপি হয়েছে' : 'All copied!')
+                  : (state.language === 'bn' ? 'সব কপি করুন' : 'Copy all')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Developer Info Card */}
