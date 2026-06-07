@@ -87,6 +87,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // THEN check current session — validate with the server so expired tokens are caught
     (async () => {
       try {
+        const host = getAuthHostInfo();
+        if (!host.oauthSupported && window.location.pathname.startsWith('/~oauth')) {
+          window.location.replace(buildPublishedGoogleOAuthUrl(window.location.origin));
+          return;
+        }
+
         const bridgeReturn = getAuthBridgeReturnOrigin();
         const bridgeTokens = readBridgeTokensFromHash();
 
