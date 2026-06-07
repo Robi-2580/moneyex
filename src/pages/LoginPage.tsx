@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield, Wallet, TrendingUp, BarChart3, AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getAuthHostInfo, PUBLISHED_LOVABLE_URL } from '@/lib/authDebug';
+import { getAuthHostInfo } from '@/lib/authDebug';
 
 export default function LoginPage() {
   const { login, register, loginWithGoogle, continueAsGuest } = useAuth();
