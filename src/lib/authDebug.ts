@@ -61,6 +61,23 @@ export function buildPublishedAuthBridgeUrl(returnUrl: string) {
   return target.toString();
 }
 
+function generateBridgeState() {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    return [...crypto.getRandomValues(new Uint8Array(16))]
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  return `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+}
+
+export function buildPublishedGoogleOAuthUrl(returnUrl: string) {
+  const broker = new URL('/~oauth/initiate', PUBLISHED_LOVABLE_URL);
+  broker.searchParams.set('provider', 'google');
+  broker.searchParams.set('redirect_uri', buildPublishedAuthBridgeUrl(returnUrl));
+  broker.searchParams.set('state', generateBridgeState());
+  return broker.toString();
+}
+
 export function buildGoogleRedirectUri() {
   const bridgeReturn = getAuthBridgeReturnOrigin();
   if (typeof window === 'undefined') return PUBLISHED_LOVABLE_URL;
@@ -82,7 +99,8 @@ export function readBridgeTokensFromHash(hash = typeof window !== 'undefined' ? 
 }
 
 export function buildBridgeReturnUrl(session: Session, returnOrigin: string, returnPath = '/') {
-  const target = new URL(returnPath.startsWith('/') ? returnPath : '/', returnOrigin);
+  const safePath = returnPath.startsWith('/') && !returnPath.startsWith('/~oauth') ? returnPath : '/';
+  const target = new URL(safePath, returnOrigin);
   const hash = new URLSearchParams({
     access_token: session.access_token,
     refresh_token: session.refresh_token,
