@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Set up auth listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      // Defensive: never run async work that touches supabase here (avoid deadlocks)
+      debugAuthEvent(event, newSession);
       switch (event) {
         case 'SIGNED_IN':
         case 'TOKEN_REFRESHED':
