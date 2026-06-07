@@ -27,6 +27,73 @@ export function getAuthHostInfo() {
 // Canonical Lovable-published URL where managed Google OAuth always works.
 // Users on third-party hosts can be redirected here to complete sign-in.
 export const PUBLISHED_LOVABLE_URL = 'https://moneyex.lovable.app';
+export const AUTH_BRIDGE_RETURN_PARAM = 'auth_bridge_return';
+export const AUTH_BRIDGE_PATH_PARAM = 'auth_bridge_path';
+
+const AUTH_BRIDGE_ALLOWED_ORIGINS = ['https://paysapro.vercel.app'];
+
+function getOrigin(value: string | null | undefined) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' ? url.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isAllowedAuthBridgeReturn(value: string | null | undefined) {
+  const origin = getOrigin(value);
+  return !!origin && AUTH_BRIDGE_ALLOWED_ORIGINS.includes(origin);
+}
+
+export function getAuthBridgeReturnOrigin(search = typeof window !== 'undefined' ? window.location.search : '') {
+  const params = new URLSearchParams(search);
+  const rawReturn = params.get(AUTH_BRIDGE_RETURN_PARAM);
+  return isAllowedAuthBridgeReturn(rawReturn) ? getOrigin(rawReturn) : null;
+}
+
+export function buildPublishedAuthBridgeUrl(returnUrl: string) {
+  const source = new URL(returnUrl);
+  const target = new URL(PUBLISHED_LOVABLE_URL);
+  target.searchParams.set(AUTH_BRIDGE_RETURN_PARAM, source.origin);
+  target.searchParams.set(AUTH_BRIDGE_PATH_PARAM, `${source.pathname}${source.search}`);
+  return target.toString();
+}
+
+export function buildGoogleRedirectUri() {
+  const bridgeReturn = getAuthBridgeReturnOrigin();
+  if (!bridgeReturn || typeof window === 'undefined') return window.location.origin;
+
+  const redirect = new URL('/', window.location.origin);
+  redirect.searchParams.set(AUTH_BRIDGE_RETURN_PARAM, bridgeReturn);
+  const path = new URLSearchParams(window.location.search).get(AUTH_BRIDGE_PATH_PARAM);
+  if (path) redirect.searchParams.set(AUTH_BRIDGE_PATH_PARAM, path);
+  return redirect.toString();
+}
+
+export function readBridgeTokensFromHash(hash = typeof window !== 'undefined' ? window.location.hash : '') {
+  const params = new URLSearchParams(hash.replace(/^#/, ''));
+  const access_token = params.get('access_token');
+  const refresh_token = params.get('refresh_token');
+  if (!access_token || !refresh_token) return null;
+  return { access_token, refresh_token };
+}
+
+export function buildBridgeReturnUrl(session: Session, returnOrigin: string, returnPath = '/') {
+  const target = new URL(returnPath.startsWith('/') ? returnPath : '/', returnOrigin);
+  const hash = new URLSearchParams({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    token_type: session.token_type || 'bearer',
+    expires_at: String(session.expires_at || ''),
+    expires_in: String(Math.max(0, Math.round((session.expires_at || 0) - Date.now() / 1000))),
+    type: 'oauth',
+    auth_bridge: '1',
+  });
+  target.hash = hash.toString();
+  return target.toString();
+}
 
 export function debugAuthEvent(event: AuthChangeEvent, session: Session | null) {
   if (!isDev) return;
