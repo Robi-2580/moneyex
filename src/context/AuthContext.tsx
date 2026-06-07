@@ -90,16 +90,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (e) {
-        console.warn('Session validation failed', e);
+        debugAuthError('initial-getUser', e);
       } finally {
         setLoading(false);
       }
     })();
 
-    // Global guard: if any supabase call returns an auth error, force re-login
     const onUnhandled = (e: PromiseRejectionEvent) => {
-      const msg = String((e.reason as any)?.message || e.reason || '');
-      if (/jwt|token|expired|invalid.*refresh|not.*authenticated/i.test(msg)) {
+      if (isAuthTokenError(e.reason)) {
+        debugAuthError('unhandled-token', e.reason);
         supabase.auth.signOut().catch(() => {});
         handleSignedOut();
       }
