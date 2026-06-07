@@ -253,7 +253,17 @@ export default function LoginPage() {
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
                 Google দিয়ে সাইন ইন
+                {!hostInfo.oauthSupported && <ExternalLink size={14} className="opacity-60" />}
               </motion.button>
+
+              {!hostInfo.oauthSupported && (
+                <div className="text-[11px] text-muted-foreground bg-muted/40 rounded-lg p-2.5 leading-relaxed border border-border/60">
+                  <strong className="text-foreground">নোট:</strong> এই ডোমেইনে ({hostInfo.host}) Google login সরাসরি কাজ করে না।
+                  বাটনে ক্লিক করলে আপনাকে <a href={PUBLISHED_LOVABLE_URL} className="text-primary underline">সরকারি লিংকে</a> নিয়ে যাবে সাইন ইন করার জন্য।
+                  স্থায়ী সমাধানের জন্য কাস্টম ডোমেইন Lovable Cloud এ অ্যাটাচ করুন।
+                </div>
+              )}
+
 
               <motion.button
                 whileHover={{ scale: 1.01 }}
