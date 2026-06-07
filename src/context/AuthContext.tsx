@@ -6,7 +6,6 @@ import {
   debugAuthError,
   isAuthTokenError,
   getAuthHostInfo,
-  PUBLISHED_LOVABLE_URL,
   buildPublishedGoogleOAuthUrl,
   getAuthBridgeReturnOrigin,
   readBridgeTokensFromHash,
