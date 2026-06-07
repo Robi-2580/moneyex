@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield, Wallet, TrendingUp, BarChart3, AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getAuthHostInfo, PUBLISHED_LOVABLE_URL } from '@/lib/authDebug';
+import { getAuthHostInfo } from '@/lib/authDebug';
 
 export default function LoginPage() {
   const { login, register, loginWithGoogle, continueAsGuest } = useAuth();
@@ -259,8 +259,8 @@ export default function LoginPage() {
               {!hostInfo.oauthSupported && (
                 <div className="text-[11px] text-muted-foreground bg-muted/40 rounded-lg p-2.5 leading-relaxed border border-border/60">
                   <strong className="text-foreground">নোট:</strong> এই ডোমেইনে ({hostInfo.host}) Google login সরাসরি কাজ করে না।
-                  বাটনে ক্লিক করলে আপনাকে <a href={PUBLISHED_LOVABLE_URL} className="text-primary underline">সরকারি লিংকে</a> নিয়ে যাবে সাইন ইন করার জন্য।
-                  স্থায়ী সমাধানের জন্য কাস্টম ডোমেইন Lovable Cloud এ অ্যাটাচ করুন।
+                  বাটনে ক্লিক করলে নিরাপদ OAuth bridge দিয়ে সাইন ইন হয়ে আবার এই সাইটেই ফিরে আসবে।
+                  স্থায়ী clean URL এর জন্য আপনার নিজস্ব ডোমেইন Lovable Cloud এ অ্যাটাচ করুন।
                 </div>
               )}
 

@@ -1,7 +1,17 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { debugAuthEvent, debugAuthError, isAuthTokenError, getAuthHostInfo, PUBLISHED_LOVABLE_URL } from '@/lib/authDebug';
+import {
+  debugAuthEvent,
+  debugAuthError,
+  isAuthTokenError,
+  getAuthHostInfo,
+  buildPublishedGoogleOAuthUrl,
+  getAuthBridgeReturnOrigin,
+  readBridgeTokensFromHash,
+  buildBridgeReturnUrl,
+  buildGoogleRedirectUri,
+} from '@/lib/authDebug';
 
 interface AuthContextType {
   user: User | null;
@@ -76,6 +86,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // THEN check current session — validate with the server so expired tokens are caught
     (async () => {
       try {
+        const host = getAuthHostInfo();
+        if (!host.oauthSupported && window.location.pathname.startsWith('/~oauth')) {
+          window.location.replace(buildPublishedGoogleOAuthUrl(window.location.origin));
+          return;
+        }
+
+        const bridgeReturn = getAuthBridgeReturnOrigin();
+        const bridgeTokens = readBridgeTokensFromHash();
+
+        if (bridgeTokens) {
+          const { data, error } = await supabase.auth.setSession(bridgeTokens);
+          if (error) throw error;
+          setSession(data.session);
+          setUser(data.session?.user ?? null);
+
+          if (bridgeReturn && data.session) {
+            const params = new URLSearchParams(window.location.search);
+            window.location.replace(buildBridgeReturnUrl(data.session, bridgeReturn, params.get('auth_bridge_path') || '/'));
+            return;
+          }
+
+          window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+          return;
+        }
+
+        if (bridgeReturn) {
+          const { data: { session: bridgeSession } } = await supabase.auth.getSession();
+          if (bridgeSession) {
+            const params = new URLSearchParams(window.location.search);
+            window.location.replace(buildBridgeReturnUrl(bridgeSession, bridgeReturn, params.get('auth_bridge_path') || '/'));
+            return;
+          }
+        }
+
         const { data: { session: existing } } = await supabase.auth.getSession();
         if (existing) {
           // Verify the session is still valid server-side
@@ -131,16 +175,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     const host = getAuthHostInfo();
     if (!host.oauthSupported) {
-      // Lovable's managed OAuth broker (/~oauth/*) is only proxied on *.lovable.app
-      // and custom domains attached via Lovable. Bounce the user to the published
-      // Lovable URL to complete Google sign-in.
-      const target = `${PUBLISHED_LOVABLE_URL}/?from=${encodeURIComponent(window.location.origin)}`;
-      window.location.href = target;
+      // Third-party hosts like Vercel cannot serve /~oauth/* directly. Start the
+      // managed OAuth broker on the published Lovable URL, then bridge the session
+      // back to this host after Google completes.
+      window.location.href = buildPublishedGoogleOAuthUrl(window.location.href);
       return;
     }
     const { lovable } = await import('@/integrations/lovable/index');
     const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: window.location.origin,
+      redirect_uri: buildGoogleRedirectUri(),
     });
     if (result.error) {
       debugAuthError('google-oauth', result.error);
