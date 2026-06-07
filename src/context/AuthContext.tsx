@@ -129,11 +129,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
+    const host = getAuthHostInfo();
+    if (!host.oauthSupported) {
+      // Lovable's managed OAuth broker (/~oauth/*) is only proxied on *.lovable.app
+      // and custom domains attached via Lovable. Bounce the user to the published
+      // Lovable URL to complete Google sign-in.
+      const target = `${PUBLISHED_LOVABLE_URL}/?from=${encodeURIComponent(window.location.origin)}`;
+      window.location.href = target;
+      return;
+    }
     const { lovable } = await import('@/integrations/lovable/index');
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth('google', {
       redirect_uri: window.location.origin,
     });
-    if (result.error) throw result.error;
+    if (result.error) {
+      debugAuthError('google-oauth', result.error);
+      throw result.error;
+    }
   };
 
   const logout = async () => {
