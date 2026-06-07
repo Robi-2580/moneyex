@@ -63,7 +63,8 @@ export function buildPublishedAuthBridgeUrl(returnUrl: string) {
 
 export function buildGoogleRedirectUri() {
   const bridgeReturn = getAuthBridgeReturnOrigin();
-  if (!bridgeReturn || typeof window === 'undefined') return window.location.origin;
+  if (typeof window === 'undefined') return PUBLISHED_LOVABLE_URL;
+  if (!bridgeReturn) return window.location.origin;
 
   const redirect = new URL('/', window.location.origin);
   redirect.searchParams.set(AUTH_BRIDGE_RETURN_PARAM, bridgeReturn);
