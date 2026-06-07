@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { debugAuthEvent, debugAuthError, isAuthTokenError, getAuthHostInfo, PUBLISHED_LOVABLE_URL } from '@/lib/authDebug';
 
 interface AuthContextType {
   user: User | null;
@@ -45,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Set up auth listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      // Defensive: never run async work that touches supabase here (avoid deadlocks)
+      debugAuthEvent(event, newSession);
       switch (event) {
         case 'SIGNED_IN':
         case 'TOKEN_REFRESHED':
@@ -89,16 +90,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (e) {
-        console.warn('Session validation failed', e);
+        debugAuthError('initial-getUser', e);
       } finally {
         setLoading(false);
       }
     })();
 
-    // Global guard: if any supabase call returns an auth error, force re-login
     const onUnhandled = (e: PromiseRejectionEvent) => {
-      const msg = String((e.reason as any)?.message || e.reason || '');
-      if (/jwt|token|expired|invalid.*refresh|not.*authenticated/i.test(msg)) {
+      if (isAuthTokenError(e.reason)) {
+        debugAuthError('unhandled-token', e.reason);
         supabase.auth.signOut().catch(() => {});
         handleSignedOut();
       }
@@ -129,11 +129,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
+    const host = getAuthHostInfo();
+    if (!host.oauthSupported) {
+      // Lovable's managed OAuth broker (/~oauth/*) is only proxied on *.lovable.app
+      // and custom domains attached via Lovable. Bounce the user to the published
+      // Lovable URL to complete Google sign-in.
+      const target = `${PUBLISHED_LOVABLE_URL}/?from=${encodeURIComponent(window.location.origin)}`;
+      window.location.href = target;
+      return;
+    }
     const { lovable } = await import('@/integrations/lovable/index');
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth('google', {
       redirect_uri: window.location.origin,
     });
-    if (result.error) throw result.error;
+    if (result.error) {
+      debugAuthError('google-oauth', result.error);
+      throw result.error;
+    }
   };
 
   const logout = async () => {
