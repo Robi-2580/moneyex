@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { isAuthTokenError, getAuthHostInfo, debugAuthEvent } from '../authDebug';
+import {
+  isAuthTokenError,
+  getAuthHostInfo,
+  debugAuthEvent,
+  buildPublishedAuthBridgeUrl,
+  buildPublishedGoogleOAuthUrl,
+  getAuthBridgeReturnOrigin,
+  readBridgeTokensFromHash,
+} from '../authDebug';
 
 function setHost(host: string) {
   Object.defineProperty(window, 'location', {
@@ -48,6 +56,33 @@ describe('getAuthHostInfo', () => {
   it('assumes unknown host is a custom domain (supported)', () => {
     setHost('paysapro.com');
     expect(getAuthHostInfo().oauthSupported).toBe(true);
+  });
+});
+
+describe('auth bridge helpers', () => {
+  it('builds a published bridge URL for the Vercel app', () => {
+    const url = new URL(buildPublishedAuthBridgeUrl('https://paysapro.vercel.app/transactions?x=1'));
+    expect(url.origin).toBe('https://moneyex.lovable.app');
+    expect(url.searchParams.get('auth_bridge_return')).toBe('https://paysapro.vercel.app');
+    expect(url.searchParams.get('auth_bridge_path')).toBe('/transactions?x=1');
+  });
+
+  it('starts Google OAuth through the published Lovable broker', () => {
+    const url = new URL(buildPublishedGoogleOAuthUrl('https://paysapro.vercel.app/'));
+    expect(url.origin).toBe('https://moneyex.lovable.app');
+    expect(url.pathname).toBe('/~oauth/initiate');
+    expect(url.searchParams.get('provider')).toBe('google');
+    expect(url.searchParams.get('redirect_uri')).toContain('auth_bridge_return=https%3A%2F%2Fpaysapro.vercel.app');
+  });
+
+  it('only accepts the configured Vercel bridge return origin', () => {
+    expect(getAuthBridgeReturnOrigin('?auth_bridge_return=https%3A%2F%2Fpaysapro.vercel.app')).toBe('https://paysapro.vercel.app');
+    expect(getAuthBridgeReturnOrigin('?auth_bridge_return=https%3A%2F%2Fevil.example')).toBeNull();
+  });
+
+  it('reads OAuth tokens from bridge hash', () => {
+    expect(readBridgeTokensFromHash('#access_token=a&refresh_token=b&type=oauth')).toEqual({ access_token: 'a', refresh_token: 'b' });
+    expect(readBridgeTokensFromHash('#access_token=a')).toBeNull();
   });
 });
 
