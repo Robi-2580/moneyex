@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const hostInfo = useMemo(() => getAuthHostInfo(), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
