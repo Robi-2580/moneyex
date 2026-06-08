@@ -13,6 +13,7 @@ import Budgets from "@/pages/Budgets";
 import Categories from "@/pages/Categories";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
+import AuthDebugPanel from "@/components/AuthDebugPanel";
 import Loans from "@/pages/Loans";
 import Search from "@/pages/Search";
 import NotFound from "@/pages/NotFound";
@@ -65,6 +66,7 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <AppRoutes />
+        <AuthDebugPanel />
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
