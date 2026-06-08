@@ -12,6 +12,7 @@ import {
   buildBridgeReturnUrl,
   buildGoogleRedirectUri,
 } from '@/lib/authDebug';
+import { recordAuthEvent, recordAuthRedirect } from '@/components/AuthDebugPanel';
 
 interface AuthContextType {
   user: User | null;
@@ -57,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up auth listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       debugAuthEvent(event, newSession);
+      recordAuthEvent(event, newSession?.user?.email ?? null, newSession?.expires_at);
       switch (event) {
         case 'SIGNED_IN':
         case 'TOKEN_REFRESHED':
@@ -178,12 +180,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Third-party hosts like Vercel cannot serve /~oauth/* directly. Start the
       // managed OAuth broker on the published Lovable URL, then bridge the session
       // back to this host after Google completes.
-      window.location.href = buildPublishedGoogleOAuthUrl(window.location.href);
+      const url = buildPublishedGoogleOAuthUrl(window.location.href);
+      recordAuthRedirect(url);
+      window.location.href = url;
       return;
     }
+    const redirectUri = buildGoogleRedirectUri();
+    recordAuthRedirect(redirectUri);
     const { lovable } = await import('@/integrations/lovable/index');
     const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: buildGoogleRedirectUri(),
+      redirect_uri: redirectUri,
     });
     if (result.error) {
       debugAuthError('google-oauth', result.error);
