@@ -7,7 +7,7 @@ import { CategoryIcon } from '@/lib/icon-map';
 import { BarChart3 } from 'lucide-react';
 
 export default function Reports() {
-  const { state, getCategory } = useApp();
+  const { state, getCategory, fmt } = useApp();
   const [period, setPeriod] = useState<'week' | 'month' | '3months'>('month');
 
   const now = new Date();
@@ -82,11 +82,11 @@ export default function Reports() {
       <div className="grid grid-cols-2 gap-3">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="stat-card">
           <p className="text-xs text-muted-foreground font-medium">Income</p>
-          <p className="text-xl font-bold text-success">৳{totalIncome.toLocaleString()}</p>
+          <p className="text-xl font-bold text-success">{fmt(totalIncome)}</p>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="stat-card">
           <p className="text-xs text-muted-foreground font-medium">Expense</p>
-          <p className="text-xl font-bold text-destructive">৳{totalExpense.toLocaleString()}</p>
+          <p className="text-xl font-bold text-destructive">{fmt(totalExpense)}</p>
         </motion.div>
       </div>
 
@@ -101,7 +101,7 @@ export default function Reports() {
                   <Cell key={idx} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `৳${value.toLocaleString()}`} />
+              <Tooltip formatter={(value: number) => fmt(value)} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-2 mt-2">
@@ -111,7 +111,7 @@ export default function Reports() {
                 <span className="text-muted-foreground inline-flex items-center gap-1" style={{ color: e.color }}>
                   <CategoryIcon icon={e.icon} size={12} /> <span className="text-muted-foreground">{e.name}</span>
                 </span>
-                <span className="font-semibold">৳{e.value.toLocaleString()}</span>
+                <span className="font-semibold">{fmt(e.value)}</span>
               </div>
             ))}
           </div>
@@ -127,7 +127,7 @@ export default function Reports() {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="month" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip formatter={(value: number) => `৳${value.toLocaleString()}`} />
+              <Tooltip formatter={(value: number) => fmt(value)} />
               <Legend />
               <Bar dataKey="Income" fill="hsl(0 0% 30%)" radius={[4, 4, 0, 0]} />
               <Bar dataKey="Expense" fill="hsl(0 75% 50%)" radius={[4, 4, 0, 0]} />

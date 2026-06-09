@@ -4,7 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { useMemo } from 'react';
 
 export default function LoanSummaryCard() {
-  const { state, t } = useApp();
+  const { state, t, fmt } = useApp();
   const navigate = useNavigate();
 
   const summary = useMemo(() => {
@@ -29,21 +29,21 @@ export default function LoanSummaryCard() {
             <ArrowDownLeft size={16} className="text-success" />
           </div>
           <p className="text-[10px] text-muted-foreground mb-0.5">{t('receivable')}</p>
-          <p className="font-bold text-sm text-success">৳{summary.receivable.toLocaleString()}</p>
+          <p className="font-bold text-sm text-success">{fmt(summary.receivable)}</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-3 text-center">
           <div className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-1.5">
             <ArrowUpRight size={16} className="text-destructive" />
           </div>
           <p className="text-[10px] text-muted-foreground mb-0.5">{t('payable')}</p>
-          <p className="font-bold text-sm text-destructive">৳{summary.payable.toLocaleString()}</p>
+          <p className="font-bold text-sm text-destructive">{fmt(summary.payable)}</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-3 text-center">
           <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-1.5">
             <Landmark size={16} className="text-accent" />
           </div>
           <p className="text-[10px] text-muted-foreground mb-0.5">{t('loan')}</p>
-          <p className="font-bold text-sm">৳{summary.loan.toLocaleString()}</p>
+          <p className="font-bold text-sm">{fmt(summary.loan)}</p>
         </div>
       </div>
     </>

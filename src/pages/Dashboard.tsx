@@ -11,7 +11,7 @@ import QuickEntryGrid from '@/components/QuickEntryGrid';
 import AccountsOverview from '@/components/AccountsOverview';
 
 export default function Dashboard() {
-  const { state, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName } = useApp();
+  const { state, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, fmt } = useApp();
   const { user } = useAuth();
   const [showBalance, setShowBalance] = useState(true);
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ export default function Dashboard() {
                       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
                       className="block"
                     >
-                      ৳{totalBalance.toLocaleString('en-IN')}
+                      {fmt(totalBalance)}
                     </motion.span>
                   ) : (
                     <motion.span
@@ -97,7 +97,7 @@ export default function Dashboard() {
                       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
                       className="block tracking-widest"
                     >
-                      ৳ ••••••
+                      ••••••
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -109,7 +109,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <p className="text-[10px] opacity-70">{t('income')}</p>
-                    <p className="text-sm font-bold">৳{totalIncome.toLocaleString()}</p>
+                    <p className="text-sm font-bold">{fmt(totalIncome)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 flex-1">
@@ -118,7 +118,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <p className="text-[10px] opacity-70">{t('expense')}</p>
-                    <p className="text-sm font-bold">৳{totalExpense.toLocaleString()}</p>
+                    <p className="text-sm font-bold">{fmt(totalExpense)}</p>
                   </div>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function Dashboard() {
                           </p>
                         </div>
                         <span className={`font-bold text-sm ${txn.type === 'income' ? 'text-success' : 'text-destructive'}`}>
-                          {txn.type === 'income' ? '+' : '-'}৳{txn.amount.toLocaleString()}
+                          {txn.type === 'income' ? '+' : '-'}{fmt(txn.amount)}
                         </span>
                       </div>
                     );

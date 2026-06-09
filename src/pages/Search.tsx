@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Search() {
-  const { state, getCategory, getWallet, t, catName } = useApp();
+  const { state, getCategory, getWallet, t, catName, fmt } = useApp();
   const [q, setQ] = useState('');
 
   const results = useMemo(() => {
@@ -70,7 +70,7 @@ export default function Search() {
                   </p>
                 </div>
                 <span className={`font-bold text-sm ${txn.type === 'income' ? 'text-success' : 'text-destructive'}`}>
-                  {txn.type === 'income' ? '+' : '-'}৳{txn.amount.toLocaleString()}
+                  {txn.type === 'income' ? '+' : '-'}{fmt(txn.amount)}
                 </span>
               </motion.div>
             );

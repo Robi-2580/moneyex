@@ -6,7 +6,7 @@ import { Budget } from '@/types';
 import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Budgets() {
-  const { state, dispatch, getCategory } = useApp();
+  const { state, dispatch, getCategory, fmt } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Budget | null>(null);
   const [categoryId, setCategoryId] = useState<string>('');
@@ -90,7 +90,7 @@ export default function Budgets() {
                     </span>
                     <div>
                       <p className="font-semibold text-sm">{cat?.name || 'Overall Budget'}</p>
-                      <p className="text-xs text-muted-foreground">৳{spent.toLocaleString()} / ৳{b.amount.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">{fmt(spent)} / {fmt(b.amount)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -108,7 +108,7 @@ export default function Budgets() {
                   />
                 </div>
                 <p className={`text-xs mt-1 font-medium ${isOver ? 'text-destructive' : pct > 80 ? 'text-warning' : 'text-success'}`}>
-                  {isOver ? `Over by ৳${(spent - b.amount).toLocaleString()}` : `${(100 - pct).toFixed(0)}% remaining`}
+                  {isOver ? `Over by ${fmt(spent - b.amount)}` : `${(100 - pct).toFixed(0)}% remaining`}
                 </p>
               </motion.div>
             );

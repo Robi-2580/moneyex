@@ -4,7 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { CategoryIcon } from '@/lib/icon-map';
 
 export default function AccountsOverview() {
-  const { state, t } = useApp();
+  const { state, t, fmt } = useApp();
   const navigate = useNavigate();
 
   const walletTypeLabel = (type: string) => {
@@ -37,7 +37,7 @@ export default function AccountsOverview() {
               </span>
               <span className="text-[10px] text-muted-foreground">{walletTypeLabel(wallet.type)}</span>
             </div>
-            <p className="font-bold text-base">৳{wallet.balance.toLocaleString()}</p>
+            <p className="font-bold text-base">{fmt(wallet.balance)}</p>
           </div>
         ))}
       </div>

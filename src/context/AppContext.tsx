@@ -4,6 +4,7 @@ import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS, FONTS } from '@/data/defau
 import { useAuth } from '@/context/AuthContext';
 import { loadUserData } from '@/lib/supabase-data';
 import { syncOrQueue, flushQueue, getQueue, type SyncAction } from '@/lib/sync-queue';
+import { formatNumber, type FormatNumberOptions } from '@/lib/format';
 
 interface AppState {
   wallets: Wallet[];
@@ -94,7 +95,12 @@ function reducer(state: AppState, action: Action): AppState {
     case 'UPDATE_LOAN': return { ...state, loans: state.loans.map(l => l.id === action.payload.id ? action.payload : l) };
     case 'DELETE_LOAN': return { ...state, loans: state.loans.filter(l => l.id !== action.payload) };
     case 'TOGGLE_THEME': return { ...state, isDark: !state.isDark };
-    case 'SET_LANGUAGE': return { ...state, language: action.payload };
+    case 'SET_LANGUAGE': {
+      const lang = action.payload;
+      const inFamily = FONTS[lang]?.some(f => f.value === state.fontFamily);
+      const fontFamily = inFamily ? state.fontFamily : (FONTS[lang]?.[0]?.value || state.fontFamily);
+      return { ...state, language: lang, fontFamily };
+    }
     case 'SET_FONT': return { ...state, fontFamily: action.payload };
     default: return state;
   }
@@ -110,6 +116,7 @@ interface AppContextType {
   getWallet: (id: string) => Wallet | undefined;
   t: (key: keyof typeof LABELS['bn']) => string;
   catName: (cat: Category) => string;
+  fmt: (value: number, opts?: FormatNumberOptions) => string;
   dbDispatch: (action: Action) => Promise<void>;
   isOnline: boolean;
   pendingSync: number;
@@ -293,9 +300,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const getWallet = useCallback((id: string) => state.wallets.find(w => w.id === id), [state.wallets]);
   const t = useCallback((key: keyof typeof LABELS['bn']) => LABELS[state.language]?.[key] || LABELS['bn'][key] || key, [state.language]);
   const catName = useCallback((cat: Category) => state.language === 'bn' && cat.nameBn ? cat.nameBn : cat.name, [state.language]);
+  const fmt = useCallback((value: number, opts?: FormatNumberOptions) => formatNumber(value, state.language, opts), [state.language]);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, dbDispatch, isOnline, pendingSync, isLoading }}>
+    <AppContext.Provider value={{ state, dispatch, totalBalance, totalIncome, totalExpense, getCategory, getWallet, t, catName, fmt, dbDispatch, isOnline, pendingSync, isLoading }}>
       {children}
     </AppContext.Provider>
   );
