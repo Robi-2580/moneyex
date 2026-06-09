@@ -6,7 +6,7 @@ import { Loan } from '@/types';
 import { format } from 'date-fns';
 
 export default function Loans() {
-  const { state, dispatch, t } = useApp();
+  const { state, dispatch, t, fmt } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editLoan, setEditLoan] = useState<Loan | null>(null);
   const [filter, setFilter] = useState<'all' | 'payable' | 'receivable' | 'loan'>('all');
