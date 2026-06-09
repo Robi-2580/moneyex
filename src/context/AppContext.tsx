@@ -95,7 +95,12 @@ function reducer(state: AppState, action: Action): AppState {
     case 'UPDATE_LOAN': return { ...state, loans: state.loans.map(l => l.id === action.payload.id ? action.payload : l) };
     case 'DELETE_LOAN': return { ...state, loans: state.loans.filter(l => l.id !== action.payload) };
     case 'TOGGLE_THEME': return { ...state, isDark: !state.isDark };
-    case 'SET_LANGUAGE': return { ...state, language: action.payload };
+    case 'SET_LANGUAGE': {
+      const lang = action.payload;
+      const inFamily = FONTS[lang]?.some(f => f.value === state.fontFamily);
+      const fontFamily = inFamily ? state.fontFamily : (FONTS[lang]?.[0]?.value || state.fontFamily);
+      return { ...state, language: lang, fontFamily };
+    }
     case 'SET_FONT': return { ...state, fontFamily: action.payload };
     default: return state;
   }
