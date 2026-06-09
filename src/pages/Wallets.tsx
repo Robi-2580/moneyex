@@ -15,7 +15,7 @@ const walletTypes = [
 const walletColors = ACCENT_COLORS;
 
 export default function Wallets() {
-  const { state, dispatch } = useApp();
+  const { state, dispatch, fmt } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Wallet | null>(null);
   const [name, setName] = useState('');
@@ -56,7 +56,7 @@ export default function Wallets() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card-primary rounded-3xl p-5 text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
         <p className="text-sm opacity-80">Total across all wallets</p>
-        <p className="text-3xl font-extrabold mt-1">৳{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+        <p className="text-3xl font-extrabold mt-1">{fmt(totalBalance, { minimumFractionDigits: 2 })}</p>
       </motion.div>
 
       {/* Wallet List */}
@@ -81,7 +81,7 @@ export default function Wallets() {
               <p className="font-semibold">{w.name}</p>
               <p className="text-xs text-muted-foreground capitalize">{w.type}</p>
             </div>
-            <p className="font-bold text-lg mr-2">৳{w.balance.toLocaleString()}</p>
+            <p className="font-bold text-lg mr-2">{fmt(w.balance)}</p>
             <div className="flex gap-1">
               <button onClick={() => openEdit(w)} className="p-2 rounded-xl hover:bg-muted"><Pencil size={16} /></button>
               <button onClick={() => dispatch({ type: 'DELETE_WALLET', payload: w.id })} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive"><Trash2 size={16} /></button>

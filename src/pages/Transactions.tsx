@@ -18,7 +18,7 @@ const safeFormatDate = (d: string) => {
 };
 
 export default function Transactions() {
-  const { state, dbDispatch, getCategory, getWallet, isLoading } = useApp();
+  const { state, dbDispatch, getCategory, getWallet, isLoading, fmt } = useApp();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
   const [editTxn, setEditTxn] = useState<Transaction | null>(null);
@@ -109,7 +109,7 @@ export default function Transactions() {
                         <p className="text-xs text-muted-foreground truncate">{txn.note || wal?.name}</p>
                       </div>
                       <span className={`font-bold text-sm ${txn.type === 'income' ? 'text-success' : 'text-destructive'}`}>
-                        {txn.type === 'income' ? '+' : '-'}৳{txn.amount.toLocaleString()}
+                        {txn.type === 'income' ? '+' : '-'}{fmt(txn.amount)}
                       </span>
                     </motion.div>
                   </SwipeableTransaction>

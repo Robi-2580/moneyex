@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function AddTransactionModal({ open, onClose, editTransaction, prefilledCategoryId }: Props) {
-  const { state, dispatch, catName } = useApp();
+  const { state, dispatch, catName, fmt } = useApp();
   const [type, setType] = useState<'expense' | 'income'>(editTransaction?.type || 'expense');
   const [amount, setAmount] = useState(editTransaction?.amount?.toString() || '');
   const [categoryId, setCategoryId] = useState(editTransaction?.categoryId || '');
@@ -113,13 +113,12 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
             <div className="mb-4">
               <label className="text-sm font-medium text-muted-foreground mb-1 block">Amount</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-bold text-muted-foreground">৳</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full pl-10 pr-4 py-3 bg-muted rounded-2xl text-2xl font-bold outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full px-4 py-3 bg-muted rounded-2xl text-2xl font-bold outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
@@ -155,7 +154,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
                   className="w-full py-3 px-4 bg-muted rounded-2xl outline-none appearance-none font-medium focus:ring-2 focus:ring-primary/30"
                 >
                   {state.wallets.map(w => (
-                    <option key={w.id} value={w.id}>{w.name} (৳{w.balance.toLocaleString()})</option>
+                    <option key={w.id} value={w.id}>{w.name} ({fmt(w.balance)})</option>
                   ))}
                 </select>
                 <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />

@@ -129,7 +129,7 @@ export default function Loans() {
                 </span>
                 <span className="font-semibold text-sm">{loan.personName}</span>
               </div>
-              <span className="font-bold">৳{(loan.amount - loan.paidAmount).toLocaleString()}</span>
+              <span className="font-bold">{fmt(loan.amount - loan.paidAmount)}</span>
             </div>
             <p className="text-xs text-muted-foreground mb-2">
               {loan.note && `${loan.note} · `}{format(new Date(loan.date), 'dd MMM yyyy')}
@@ -162,7 +162,7 @@ export default function Loans() {
                     <span className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold ${typeColor(loan.type)}`}>{typeLabel(loan.type)}</span>
                     <span className="text-sm line-through">{loan.personName}</span>
                   </div>
-                  <span className="text-sm line-through">৳{loan.amount.toLocaleString()}</span>
+                  <span className="text-sm line-through">{fmt(loan.amount)}</span>
                 </div>
               </div>
             ))}
