@@ -256,13 +256,8 @@ export default function LoginPage() {
                 {!hostInfo.oauthSupported && <ExternalLink size={14} className="opacity-60" />}
               </motion.button>
 
-              {!hostInfo.oauthSupported && (
-                <div className="text-[11px] text-muted-foreground bg-muted/40 rounded-lg p-2.5 leading-relaxed border border-border/60">
-                  <strong className="text-foreground">নোট:</strong> এই ডোমেইনে ({hostInfo.host}) Google login সরাসরি কাজ করে না।
-                  বাটনে ক্লিক করলে নিরাপদ OAuth bridge দিয়ে সাইন ইন হয়ে আবার এই সাইটেই ফিরে আসবে।
-                  স্থায়ী clean URL এর জন্য আপনার নিজস্ব ডোমেইন Lovable Cloud এ অ্যাটাচ করুন।
-                </div>
-              )}
+
+
 
 
               <motion.button
