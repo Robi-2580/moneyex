@@ -1,0 +1,5 @@
+{
+  "bridgeVersion": "2026-06-09.1",
+  "feature": "oauth-bridge",
+  "notes": "Bumped whenever src/lib/authDebug.ts bridge logic changes."
+}

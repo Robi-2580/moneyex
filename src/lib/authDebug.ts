@@ -5,6 +5,11 @@ import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 const isDev = import.meta.env.DEV;
 
+// Bump this whenever bridge logic in this file changes. The DeployHealthCheck
+// component compares it against /deploy-version.json on third-party deploys.
+// Must stay in sync with public/deploy-version.json -> bridgeVersion.
+export const BRIDGE_VERSION = '2026-06-09.1';
+
 // Hosts where Lovable's managed OAuth broker (/~oauth/*) is proxied automatically.
 // All `*.lovable.app` previews and any custom domain attached via Lovable settings work.
 // Third-party hosts (e.g. *.vercel.app, *.netlify.app, *.pages.dev) are NOT proxied
