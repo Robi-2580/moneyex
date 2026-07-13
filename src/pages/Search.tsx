@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search as SearchIcon } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -7,7 +8,24 @@ import { CategoryIcon } from '@/lib/icon-map';
 
 export default function Search() {
   const { state, getCategory, getWallet, t, catName, fmt } = useApp();
-  const [q, setQ] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [q, setQ] = useState(searchParams.get('q') || '');
+
+  useEffect(() => {
+    const urlQ = searchParams.get('q') || '';
+    if (urlQ !== q) setQ(urlQ);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  useEffect(() => {
+    const current = searchParams.get('q') || '';
+    if (q !== current) {
+      if (q) setSearchParams({ q }, { replace: true });
+      else setSearchParams({}, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q]);
+
 
   const results = useMemo(() => {
     const query = q.trim().toLowerCase();
