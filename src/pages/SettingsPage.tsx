@@ -307,8 +307,8 @@ export default function SettingsPage() {
           <a href="https://wa.me/8801726782512" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
             <MessageCircle size={14} /> WhatsApp: 01726782512
           </a>
-          <a href="mailto:robi@example.com" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
-            <Mail size={14} /> Email Developer
+          <a href="mailto:robiulkarim2580@gmail.com" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
+            <Mail size={14} /> robiulkarim2580@gmail.com
           </a>
         </div>
         <div className="flex items-center gap-2 pt-3 border-t border-primary/10">
