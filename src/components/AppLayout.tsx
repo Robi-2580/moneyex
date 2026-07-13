@@ -24,6 +24,8 @@ export default function AppLayout() {
   const { state, dispatch, t, isOnline, pendingSync } = useApp();
   const { user, isGuest, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchQ, setSearchQ] = useState('');
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Guest';
 
@@ -33,11 +35,16 @@ export default function AppLayout() {
     { to: '/reports', icon: BarChart3, label: t('reports') },
     { to: '/transactions', icon: ReceiptText, label: t('transactions') },
     { to: '/loans', icon: BookOpen, label: t('loanBook') },
-    { to: '/search', icon: Search, label: t('search') },
     { to: '/budgets', icon: Landmark, label: t('budgets') },
     { to: '/categories', icon: Tag, label: t('categories') },
     { to: '/settings', icon: Settings, label: t('settings') },
   ];
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQ.trim();
+    navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+  };
 
   const openQuickAdd = (categoryId?: string) => {
     setPrefilledCategoryId(categoryId);
