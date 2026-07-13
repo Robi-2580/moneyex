@@ -34,10 +34,10 @@ export default function QuickEntryGrid({ onQuickAdd }: Props) {
             className="bg-card rounded-2xl border border-border p-3 text-center hover:shadow-sm hover:border-primary/30 transition-all group"
           >
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1.5 text-xl group-hover:scale-110 transition-transform"
+              className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform"
               style={{ backgroundColor: cat.color + '15' }}
             >
-              {cat.icon}
+              <CategoryIcon icon={cat.icon} color={cat.color} size={20} />
             </div>
             <p className="text-xs font-medium truncate">{catName(cat)}</p>
             <p className="text-[9px] text-muted-foreground">
