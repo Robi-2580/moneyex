@@ -144,7 +144,22 @@ export default function AppLayout() {
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
           </div>
+
+          {/* Global search */}
+          <form onSubmit={submitSearch} className="flex-1 max-w-md mx-3 hidden sm:block">
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
+                placeholder={state.language === 'bn' ? 'গ্লোবাল সার্চ...' : 'Global search...'}
+                className="w-full pl-9 pr-3 py-2 text-sm bg-muted/60 rounded-xl outline-none border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/25 transition"
+              />
+            </div>
+          </form>
+
           <div className="flex items-center gap-2">
+
             {/* Online/Offline status */}
             {!isOnline ? (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-600 text-xs font-semibold" title="অফলাইন — ডাটা লোকাল সেভ হচ্ছে">
