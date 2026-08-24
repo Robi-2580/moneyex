@@ -1,22 +1,26 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import {
-  debugAuthEvent,
-  debugAuthError,
-  isAuthTokenError,
-  getAuthHostInfo,
-  buildPublishedGoogleOAuthUrl,
-  getAuthBridgeReturnOrigin,
-  readBridgeTokensFromHash,
-  buildBridgeReturnUrl,
-  buildGoogleRedirectUri,
-} from '@/lib/authDebug';
-import { recordAuthEvent, recordAuthRedirect } from '@/components/AuthDebugPanel';
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  type User as FirebaseUser,
+} from 'firebase/auth';
+import { getFirebase } from '@/lib/firebase';
+
+// Minimal user shape that mirrors what the UI already consumes
+// (user.id, user.email, user.user_metadata.full_name).
+export interface AppUser {
+  id: string;
+  email: string | null;
+  user_metadata: { full_name?: string; name?: string };
+}
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: AppUser | null;
   loading: boolean;
   isGuest: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -30,6 +34,15 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 const GUEST_KEY = 'mm-guest-mode';
 
+function mapUser(u: FirebaseUser | null): AppUser | null {
+  if (!u) return null;
+  return {
+    id: u.uid,
+    email: u.email,
+    user_metadata: { full_name: u.displayName || undefined, name: u.displayName || undefined },
+  };
+}
+
 function clearLocalUserCaches() {
   try {
     Object.keys(localStorage).forEach((k) => {
@@ -40,165 +53,111 @@ function clearLocalUserCaches() {
   } catch {}
 }
 
+/** Translate Firebase auth error codes into friendly Bengali messages. */
+function friendlyError(err: any): Error {
+  const code = err?.code || '';
+  const map: Record<string, string> = {
+    'auth/invalid-credential': 'ইমেইল বা পাসওয়ার্ড ভুল হয়েছে',
+    'auth/wrong-password': 'পাসওয়ার্ড ভুল হয়েছে',
+    'auth/user-not-found': 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই',
+    'auth/email-already-in-use': 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে, সাইন ইন করুন',
+    'auth/weak-password': 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে',
+    'auth/invalid-email': 'ইমেইল ঠিকানা সঠিক নয়',
+    'auth/popup-closed-by-user': 'লগইন উইন্ডো বন্ধ হয়ে গেছে',
+    'auth/cancelled-popup-request': '',
+    'auth/popup-blocked': 'ব্রাউজার পপ-আপ ব্লক করেছে — পপ-আপ allow করুন',
+    'auth/unauthorized-domain': 'এই ডোমেইন Firebase-এ authorized নয় — Firebase Console-এ যোগ করুন',
+    'auth/network-request-failed': 'ইন্টারনেট সংযোগ নেই',
+    'auth/too-many-requests': 'অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পর আবার করুন',
+  };
+  if (code === 'auth/cancelled-popup-request') return new Error('');
+  return new Error(map[code] || err?.message || 'কিছু একটা ভুল হয়েছে');
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState<boolean>(() => {
     try { return localStorage.getItem(GUEST_KEY) === '1'; } catch { return false; }
   });
 
   const handleSignedOut = useCallback(() => {
-    setSession(null);
     setUser(null);
     clearLocalUserCaches();
   }, []);
 
   useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      debugAuthEvent(event, newSession);
-      recordAuthEvent(event, newSession?.user?.email ?? null, newSession?.expires_at);
-      switch (event) {
-        case 'SIGNED_IN':
-        case 'TOKEN_REFRESHED':
-        case 'USER_UPDATED':
-        case 'INITIAL_SESSION':
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
-          if (newSession?.user) {
-            setIsGuest(false);
-            try { localStorage.removeItem(GUEST_KEY); } catch {}
-          }
-          break;
-        case 'SIGNED_OUT':
-          handleSignedOut();
-          break;
-        case 'PASSWORD_RECOVERY':
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
-          break;
-        default:
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
-      }
-      setLoading(false);
-    });
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
 
-    // THEN check current session — validate with the server so expired tokens are caught
     (async () => {
       try {
-        const host = getAuthHostInfo();
-        if (!host.oauthSupported && window.location.pathname.startsWith('/~oauth')) {
-          window.location.replace(buildPublishedGoogleOAuthUrl(window.location.origin));
-          return;
-        }
-
-        const bridgeReturn = getAuthBridgeReturnOrigin();
-        const bridgeTokens = readBridgeTokensFromHash();
-
-        if (bridgeTokens) {
-          const { data, error } = await supabase.auth.setSession(bridgeTokens);
-          if (error) throw error;
-          setSession(data.session);
-          setUser(data.session?.user ?? null);
-
-          if (bridgeReturn && data.session) {
-            const params = new URLSearchParams(window.location.search);
-            window.location.replace(buildBridgeReturnUrl(data.session, bridgeReturn, params.get('auth_bridge_path') || '/'));
-            return;
-          }
-
-          window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
-          return;
-        }
-
-        if (bridgeReturn) {
-          const { data: { session: bridgeSession } } = await supabase.auth.getSession();
-          if (bridgeSession) {
-            const params = new URLSearchParams(window.location.search);
-            window.location.replace(buildBridgeReturnUrl(bridgeSession, bridgeReturn, params.get('auth_bridge_path') || '/'));
-            return;
-          }
-        }
-
-        const { data: { session: existing } } = await supabase.auth.getSession();
-        if (existing) {
-          // Verify the session is still valid server-side
-          const { data: { user: verified }, error } = await supabase.auth.getUser();
-          if (error || !verified) {
-            // Token invalid/expired — sign out cleanly
-            await supabase.auth.signOut().catch(() => {});
-            handleSignedOut();
+        const { auth } = await getFirebase();
+        if (cancelled) return;
+        // Firebase persists the session in IndexedDB by default, so returning
+        // users are restored automatically. Token refresh is handled by the SDK.
+        unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+          const mapped = mapUser(fbUser);
+          setUser(mapped);
+          if (mapped) {
+            setIsGuest(false);
+            try { localStorage.removeItem(GUEST_KEY); } catch {}
           } else {
-            setSession(existing);
-            setUser(verified);
+            clearLocalUserCaches();
           }
-        }
+          setLoading(false);
+        });
       } catch (e) {
-        debugAuthError('initial-getUser', e);
-      } finally {
-        setLoading(false);
+        console.error('[auth] firebase init failed', e);
+        if (!cancelled) setLoading(false);
       }
     })();
 
-    const onUnhandled = (e: PromiseRejectionEvent) => {
-      if (isAuthTokenError(e.reason)) {
-        debugAuthError('unhandled-token', e.reason);
-        supabase.auth.signOut().catch(() => {});
-        handleSignedOut();
-      }
-    };
-    window.addEventListener('unhandledrejection', onUnhandled);
-
     return () => {
-      subscription.unsubscribe();
-      window.removeEventListener('unhandledrejection', onUnhandled);
+      cancelled = true;
+      unsubscribe?.();
     };
-  }, [handleSignedOut]);
+  }, []);
 
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    try {
+      const { auth } = await getFirebase();
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      throw friendlyError(e);
+    }
   };
 
   const register = async (email: string, password: string, name: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
-    if (error) throw error;
+    try {
+      const { auth } = await getFirebase();
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      if (name.trim()) {
+        await updateProfile(cred.user, { displayName: name.trim() }).catch(() => {});
+        setUser(mapUser(auth.currentUser));
+      }
+    } catch (e) {
+      throw friendlyError(e);
+    }
   };
 
   const loginWithGoogle = async () => {
-    const host = getAuthHostInfo();
-    if (!host.oauthSupported) {
-      // Third-party hosts like Vercel cannot serve /~oauth/* directly. Start the
-      // managed OAuth broker on the published Lovable URL, then bridge the session
-      // back to this host after Google completes.
-      const url = buildPublishedGoogleOAuthUrl(window.location.href);
-      recordAuthRedirect(url);
-      window.location.href = url;
-      return;
-    }
-    const redirectUri = buildGoogleRedirectUri();
-    recordAuthRedirect(redirectUri);
-    const { lovable } = await import('@/integrations/lovable/index');
-    const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: redirectUri,
-    });
-    if (result.error) {
-      debugAuthError('google-oauth', result.error);
-      throw result.error;
+    try {
+      const { auth } = await getFirebase();
+      const provider = new GoogleAuthProvider();
+      // Popup flow works on ANY authorized domain — Vercel, Lovable, custom — no bridge needed.
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      const err = friendlyError(e);
+      if (err.message) throw err; // empty message = cancelled popup, stay silent
     }
   };
 
   const logout = async () => {
-    try { await supabase.auth.signOut(); } catch {}
+    try {
+      const { auth } = await getFirebase();
+      await signOut(auth);
+    } catch {}
     handleSignedOut();
     setIsGuest(false);
     try { localStorage.removeItem(GUEST_KEY); } catch {}
@@ -211,7 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isGuest, login, register, loginWithGoogle, logout, continueAsGuest }}>
+    <AuthContext.Provider value={{ user, loading, isGuest, login, register, loginWithGoogle, logout, continueAsGuest }}>
       {children}
     </AuthContext.Provider>
   );

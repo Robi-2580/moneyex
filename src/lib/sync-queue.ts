@@ -1,4 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
+import { doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getFirebase } from '@/lib/firebase';
 import type { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
 
 export type SyncAction =
@@ -50,71 +51,89 @@ export function enqueue(userId: string, action: SyncAction) {
   setQueue(userId, q);
 }
 
+type CollectionName = 'wallets' | 'categories' | 'transactions' | 'budgets' | 'loans';
+
+async function docRef(userId: string, col: CollectionName, id: string) {
+  const { db } = await getFirebase();
+  return doc(db, 'users', userId, col, id);
+}
+
+async function profileRef(userId: string) {
+  const { db } = await getFirebase();
+  return doc(db, 'users', userId);
+}
+
 export async function executeAction(userId: string, action: SyncAction): Promise<void> {
   switch (action.type) {
-    case 'ADD_WALLET': {
-      const w = action.payload;
-      await supabase.from('wallets').insert({ id: w.id, user_id: userId, name: w.name, type: w.type, balance: w.balance, icon: w.icon, color: w.color });
+    case 'ADD_WALLET':
+      await setDoc(await docRef(userId, 'wallets', action.payload.id), action.payload);
       return;
-    }
     case 'UPDATE_WALLET': {
-      const w = action.payload;
-      await supabase.from('wallets').update({ name: w.name, type: w.type, balance: w.balance, icon: w.icon, color: w.color }).eq('id', w.id);
+      const { id, ...data } = action.payload;
+      await updateDoc(await docRef(userId, 'wallets', id), data);
       return;
     }
     case 'DELETE_WALLET':
-      await supabase.from('wallets').delete().eq('id', action.payload); return;
-    case 'ADD_CATEGORY': {
-      const c = action.payload;
-      await supabase.from('categories').insert({ id: c.id, user_id: userId, name: c.name, name_bn: c.nameBn, type: c.type, icon: c.icon, color: c.color, is_default: c.isDefault });
+      await deleteDoc(await docRef(userId, 'wallets', action.payload));
+      return;
+    case 'ADD_CATEGORY':
+      await setDoc(await docRef(userId, 'categories', action.payload.id), action.payload);
+      return;
+    case 'UPDATE_CATEGORY': {
+      const { id, ...data } = action.payload;
+      await updateDoc(await docRef(userId, 'categories', id), data);
       return;
     }
-    case 'UPDATE_CATEGORY': {
-      const c = action.payload;
-      await supabase.from('categories').update({ name: c.name, name_bn: c.nameBn, type: c.type, icon: c.icon, color: c.color }).eq('id', c.id); return;
-    }
     case 'DELETE_CATEGORY':
-      await supabase.from('categories').delete().eq('id', action.payload); return;
+      await deleteDoc(await docRef(userId, 'categories', action.payload));
+      return;
     case 'ADD_TRANSACTION': {
-      const t = action.payload;
-      await supabase.from('transactions').insert({ id: t.id, user_id: userId, type: t.type, amount: t.amount, category_id: t.categoryId, wallet_id: t.walletId, note: t.note, date: t.date });
+      const { _walletDelta, ...t } = action.payload;
+      await setDoc(await docRef(userId, 'transactions', t.id), t);
       return;
     }
     case 'UPDATE_TRANSACTION': {
-      const { new: newT } = action.payload;
-      await supabase.from('transactions').update({ type: newT.type, amount: newT.amount, category_id: newT.categoryId, wallet_id: newT.walletId, note: newT.note, date: newT.date }).eq('id', newT.id);
+      const { id, ...data } = action.payload.new;
+      await updateDoc(await docRef(userId, 'transactions', id), data);
       return;
     }
     case 'DELETE_TRANSACTION':
-      await supabase.from('transactions').delete().eq('id', action.payload.id); return;
-    case 'ADD_BUDGET': {
-      const b = action.payload;
-      await supabase.from('budgets').insert({ id: b.id, user_id: userId, category_id: b.categoryId, amount: b.amount, month: b.month, spent: b.spent }); return;
-    }
+      await deleteDoc(await docRef(userId, 'transactions', action.payload.id));
+      return;
+    case 'ADD_BUDGET':
+      await setDoc(await docRef(userId, 'budgets', action.payload.id), action.payload);
+      return;
     case 'UPDATE_BUDGET': {
-      const b = action.payload;
-      await supabase.from('budgets').update({ category_id: b.categoryId, amount: b.amount, month: b.month, spent: b.spent }).eq('id', b.id); return;
+      const { id, ...data } = action.payload;
+      await updateDoc(await docRef(userId, 'budgets', id), data);
+      return;
     }
     case 'DELETE_BUDGET':
-      await supabase.from('budgets').delete().eq('id', action.payload); return;
-    case 'ADD_LOAN': {
-      const l = action.payload;
-      await supabase.from('loans').insert({ id: l.id, user_id: userId, type: l.type, person_name: l.personName, amount: l.amount, paid_amount: l.paidAmount, note: l.note, date: l.date, due_date: l.dueDate, status: l.status }); return;
-    }
+      await deleteDoc(await docRef(userId, 'budgets', action.payload));
+      return;
+    case 'ADD_LOAN':
+      await setDoc(await docRef(userId, 'loans', action.payload.id), action.payload);
+      return;
     case 'UPDATE_LOAN': {
-      const l = action.payload;
-      await supabase.from('loans').update({ type: l.type, person_name: l.personName, amount: l.amount, paid_amount: l.paidAmount, note: l.note, date: l.date, due_date: l.dueDate, status: l.status }).eq('id', l.id); return;
+      const { id, ...data } = action.payload;
+      await updateDoc(await docRef(userId, 'loans', id), data);
+      return;
     }
     case 'DELETE_LOAN':
-      await supabase.from('loans').delete().eq('id', action.payload); return;
+      await deleteDoc(await docRef(userId, 'loans', action.payload));
+      return;
     case 'TOGGLE_THEME':
-      await supabase.from('profiles').update({ is_dark: action.payload }).eq('user_id', userId); return;
+      await setDoc(await profileRef(userId), { isDark: action.payload }, { merge: true });
+      return;
     case 'SET_LANGUAGE':
-      await supabase.from('profiles').update({ language: action.payload }).eq('user_id', userId); return;
+      await setDoc(await profileRef(userId), { language: action.payload }, { merge: true });
+      return;
     case 'SET_FONT':
-      await supabase.from('profiles').update({ font_family: action.payload }).eq('user_id', userId); return;
+      await setDoc(await profileRef(userId), { fontFamily: action.payload }, { merge: true });
+      return;
     case 'WALLET_BALANCE':
-      await supabase.from('wallets').update({ balance: action.payload.balance }).eq('id', action.payload.walletId); return;
+      await updateDoc(await docRef(userId, 'wallets', action.payload.walletId), { balance: action.payload.balance });
+      return;
   }
 }
 
