@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect, useCallback, u
 import { Wallet, Category, Transaction, Budget, Loan, Language } from '@/types';
 import { DEFAULT_CATEGORIES, DEFAULT_WALLETS, LABELS, FONTS } from '@/data/defaults';
 import { useAuth } from '@/context/AuthContext';
-import { loadUserData } from '@/lib/supabase-data';
+import { loadUserData } from '@/lib/firestore-data';
 import { syncOrQueue, flushQueue, getQueue, type SyncAction } from '@/lib/sync-queue';
 import { formatNumber, type FormatNumberOptions } from '@/lib/format';
 
