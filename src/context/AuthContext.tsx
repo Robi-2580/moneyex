@@ -37,10 +37,20 @@ const GUEST_KEY = 'mm-guest-mode';
 
 function mapUser(u: FirebaseUser | null): AppUser | null {
   if (!u) return null;
+  const providers = u.providerData.map((p) => p.providerId);
   return {
     id: u.uid,
     email: u.email,
-    user_metadata: { full_name: u.displayName || undefined, name: u.displayName || undefined },
+    user_metadata: {
+      full_name: u.displayName || undefined,
+      name: u.displayName || undefined,
+      avatar_url: u.photoURL || undefined,
+    },
+    app_metadata: {
+      provider: providers[0],
+      providers,
+      email_verified: u.emailVerified,
+    },
   };
 }
 
