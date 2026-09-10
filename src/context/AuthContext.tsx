@@ -16,7 +16,8 @@ import { getFirebase } from '@/lib/firebase';
 export interface AppUser {
   id: string;
   email: string | null;
-  user_metadata: { full_name?: string; name?: string };
+  user_metadata: { full_name?: string; name?: string; avatar_url?: string };
+  app_metadata: { provider?: string; providers: string[]; email_verified: boolean };
 }
 
 interface AuthContextType {
