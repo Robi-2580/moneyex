@@ -11,7 +11,7 @@ import {
   initializeTestEnvironment,
   assertSucceeds,
   assertFails,
-  type TestEnvironment,
+  type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 
 let emulatorUp = false;
@@ -23,10 +23,10 @@ try {
 }
 
 describe.skipIf(!emulatorUp)('firestore.rules: per-user data isolation', () => {
-  let env: TestEnvironment;
-  let alice: ReturnType<TestEnvironment['authenticatedContext']>;
-  let bob: ReturnType<TestEnvironment['authenticatedContext']>;
-  let unauth: ReturnType<TestEnvironment['unauthenticatedContext']>;
+  let env: RulesTestEnvironment;
+  let alice: ReturnType<RulesTestEnvironment['authenticatedContext']>;
+  let bob: ReturnType<RulesTestEnvironment['authenticatedContext']>;
+  let unauth: ReturnType<RulesTestEnvironment['unauthenticatedContext']>;
 
   beforeAll(async () => {
     env = await initializeTestEnvironment({
