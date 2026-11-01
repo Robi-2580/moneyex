@@ -11,7 +11,7 @@ import {
   initializeTestEnvironment,
   assertSucceeds,
   assertFails,
-  type TestEnvironment,
+  type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 
 let emulatorUp = false;
