@@ -137,7 +137,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
                         : 'bg-muted hover:bg-muted/80'
                     }`}
                   >
-                    <span className="text-xl">{cat.icon}</span>
+                    <CategoryIcon icon={cat.icon} color={cat.color} size={24} />
                     <span className="font-medium truncate w-full text-center">{catName(cat)}</span>
                   </button>
                 ))}
