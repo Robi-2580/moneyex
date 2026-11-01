@@ -77,11 +77,16 @@ function friendlyError(err: any): Error {
     'auth/popup-closed-by-user': 'লগইন উইন্ডো বন্ধ হয়ে গেছে',
     'auth/cancelled-popup-request': '',
     'auth/popup-blocked': 'ব্রাউজার পপ-আপ ব্লক করেছে — পপ-আপ allow করুন',
-    'auth/unauthorized-domain': 'এই ডোমেইন Firebase-এ authorized নয় — Firebase Console-এ যোগ করুন',
     'auth/network-request-failed': 'ইন্টারনেট সংযোগ নেই',
     'auth/too-many-requests': 'অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পর আবার করুন',
   };
   if (code === 'auth/cancelled-popup-request') return new Error('');
+  if (code === 'auth/unauthorized-domain') {
+    const host = typeof window !== 'undefined' ? window.location.hostname : '';
+    return new Error(
+      `"${host}" ঠিকানাটি Google লগইনের জন্য অনুমোদিত নয়। Firebase Console → Authentication → Settings → Authorized domains-এ এই ঠিকানাটি যোগ করুন।`
+    );
+  }
   return new Error(map[code] || err?.message || 'কিছু একটা ভুল হয়েছে');
 }
 
