@@ -40,6 +40,7 @@ function AppRoutes() {
 
   return (
     <AppProvider>
+      <AdSystem />
       <Sonner />
       <BrowserRouter>
         <Routes>
