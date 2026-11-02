@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/context/AppContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import AppLayout from "@/components/AppLayout";
+import AdSystem from "@/components/AdSystem";
 import Dashboard from "@/pages/Dashboard";
 import Wallets from "@/pages/Wallets";
 import Transactions from "@/pages/Transactions";
@@ -39,6 +40,7 @@ function AppRoutes() {
 
   return (
     <AppProvider>
+      <AdSystem />
       <Sonner />
       <BrowserRouter>
         <Routes>
