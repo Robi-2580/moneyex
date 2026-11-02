@@ -30,15 +30,10 @@ function buildBanner(container: HTMLElement) {
   iframe.style.border = "0";
   iframe.setAttribute("scrolling", "no");
   iframe.setAttribute("title", "advertisement");
-  container.appendChild(iframe);
-  const doc = iframe.contentDocument;
-  if (!doc) return;
-  doc.open();
-  doc.write(
+  iframe.srcdoc =
     `<script>atOptions = { 'key': '${BANNER_KEY}', 'format': 'iframe', 'height': 50, 'width': 320, 'params': {} };<\/script>` +
-      `<script src="${BANNER_SRC}"><\/script>`
-  );
-  doc.close();
+    `<script src="${BANNER_SRC}"><\/script>`;
+  container.appendChild(iframe);
 }
 
 const AdSystem = () => {
