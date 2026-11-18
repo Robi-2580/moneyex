@@ -40,7 +40,7 @@ export default function Categories() {
   return (
     <div className="py-4 space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Categories</h2>
+        <h1 className="text-xl font-bold">Categories</h1>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowForm(true)}
           className="flex items-center gap-1 text-sm font-semibold text-primary">
           <Plus size={16} /> Add
@@ -68,8 +68,8 @@ export default function Categories() {
             <p className="font-semibold text-sm">{cat.name}</p>
             {!cat.isDefault && (
               <div className="absolute top-2 right-2 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(cat)} className="p-1 rounded-lg hover:bg-muted"><Pencil size={12} /></button>
-                <button onClick={() => dispatch({ type: 'DELETE_CATEGORY', payload: cat.id })} className="p-1 rounded-lg hover:bg-destructive/10 text-destructive"><Trash2 size={12} /></button>
+                <button onClick={() => openEdit(cat)} className="p-1 rounded-lg hover:bg-muted" aria-label={`Edit category ${cat.name}`}><Pencil size={12} /></button>
+                <button onClick={() => dispatch({ type: 'DELETE_CATEGORY', payload: cat.id })} className="p-1 rounded-lg hover:bg-destructive/10 text-destructive" aria-label={`Delete category ${cat.name}`}><Trash2 size={12} /></button>
               </div>
             )}
           </motion.div>
@@ -83,19 +83,19 @@ export default function Categories() {
             <motion.div className="relative w-full max-w-lg bg-card rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl" initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}>
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-bold">{editing ? 'Edit' : 'Add'} Category</h2>
-                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted"><X size={20} /></button>
+                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted" aria-label="Close category form"><X size={20} /></button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Name</label>
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Category name"
+                  <label htmlFor="category-name" className="text-sm font-medium text-muted-foreground mb-1 block">Name</label>
+                  <input id="category-name" value={name} onChange={e => setName(e.target.value)} placeholder="Category name"
                     className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium focus:ring-2 focus:ring-primary/30" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Type</label>
+                  <span className="text-sm font-medium text-muted-foreground mb-1 block">Type</span>
                   <div className="flex gap-2">
                     {(['expense', 'income'] as const).map(t => (
-                      <button key={t} onClick={() => setType(t)}
+                      <button key={t} onClick={() => setType(t)} aria-pressed={type === t}
                         className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all capitalize ${type === t ? 'bg-primary text-primary-foreground shadow' : 'bg-muted'}`}>
                         {t}
                       </button>
@@ -106,7 +106,7 @@ export default function Categories() {
                   <label className="text-sm font-medium text-muted-foreground mb-2 block">Icon</label>
                   <div className="flex flex-wrap gap-2">
                     {iconOptions.map(ic => (
-                      <button key={ic} onClick={() => setIcon(ic)}
+                      <button key={ic} onClick={() => setIcon(ic)} aria-label={`Select ${ic} icon`} aria-pressed={icon === ic}
                         className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${icon === ic ? 'bg-primary/10 ring-2 ring-primary text-primary' : 'bg-muted text-foreground'}`}>
                         <CategoryIcon icon={ic} size={18} />
                       </button>
@@ -117,7 +117,7 @@ export default function Categories() {
                   <label className="text-sm font-medium text-muted-foreground mb-2 block">Color</label>
                   <div className="flex flex-wrap gap-2">
                     {colorOptions.map(c => (
-                      <button key={c} onClick={() => setColor(c)}
+                      <button key={c} onClick={() => setColor(c)} aria-label={`Select color ${c}`} aria-pressed={color === c}
                         className={`w-9 h-9 rounded-full transition-transform ${color === c ? 'ring-2 ring-primary ring-offset-2 ring-offset-card scale-110' : ''}`}
                         style={{ backgroundColor: c }} />
                     ))}

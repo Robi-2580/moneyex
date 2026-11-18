@@ -67,7 +67,7 @@ export default function Dashboard() {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm opacity-80 font-medium">{t('totalBalance')}</span>
-                <button onClick={() => setShowBalance(!showBalance)} className="p-1 rounded-lg hover:bg-white/10">
+                <button onClick={() => setShowBalance(!showBalance)} className="p-1 rounded-lg hover:bg-white/10" aria-label={showBalance ? 'Hide balance' : 'Show balance'}>
                   {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </div>

@@ -43,11 +43,12 @@ export default function Search() {
 
   return (
     <div className="py-4 space-y-4">
-      <h2 className="text-xl font-bold">{t('search')}</h2>
+      <h1 className="text-xl font-bold">{t('search')}</h1>
 
       <div className="relative">
         <SearchIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
+          aria-label={state.language === 'bn' ? 'লেনদেন খুঁজুন' : 'Search transactions'}
           autoFocus
           value={q}
           onChange={e => setQ(e.target.value)}

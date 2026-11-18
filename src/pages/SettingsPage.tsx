@@ -82,6 +82,7 @@ export default function SettingsPage() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
+    input.setAttribute('aria-label', state.language === 'bn' ? 'ব্যাকআপ ফাইল নির্বাচন করুন' : 'Choose backup file');
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
@@ -151,7 +152,7 @@ export default function SettingsPage() {
 
   return (
     <div className="py-4 space-y-5">
-      <h2 className="text-xl font-bold">{t('settings')}</h2>
+      <h1 className="text-xl font-bold">{t('settings')}</h1>
 
       {/* Font Selection Dropdown */}
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">

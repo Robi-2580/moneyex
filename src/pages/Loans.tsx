@@ -86,7 +86,7 @@ export default function Loans() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">{t('loanBook')}</h2>
+        <h1 className="text-xl font-bold">{t('loanBook')}</h1>
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold"
@@ -181,11 +181,11 @@ export default function Loans() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold">{editLoan ? 'Edit' : 'Add'} Loan</h3>
-                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted"><X size={18} /></button>
+                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted" aria-label="Close loan form"><X size={18} /></button>
               </div>
 
               {/* Type */}
-              <div className="flex gap-2 mb-4 p-1 bg-muted rounded-xl">
+              <div className="flex gap-2 mb-4 p-1 bg-muted rounded-xl" role="group" aria-label="Loan type">
                 {(['receivable', 'payable', 'loan'] as const).map(ltype => (
                   <button
                     key={ltype}
@@ -193,6 +193,7 @@ export default function Loans() {
                       type === ltype ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground'
                     }`}
                     onClick={() => setType(ltype)}
+                    aria-pressed={type === ltype}
                   >
                     {typeLabel(ltype)}
                   </button>
@@ -200,11 +201,16 @@ export default function Loans() {
               </div>
 
               <div className="space-y-3">
-                <input value={personName} onChange={e => setPersonName(e.target.value)} placeholder="Person name" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
-                <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Amount" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
-                <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} placeholder="Due date (optional)" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
-                <input value={note} onChange={e => setNote(e.target.value)} placeholder="Note (optional)" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
+                <label className="sr-only" htmlFor="loan-person">Person name</label>
+                <input id="loan-person" value={personName} onChange={e => setPersonName(e.target.value)} placeholder="Person name" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
+                <label className="sr-only" htmlFor="loan-amount">Amount</label>
+                <input id="loan-amount" type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Amount" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
+                <label className="sr-only" htmlFor="loan-date">Date</label>
+                <input id="loan-date" type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
+                <label className="sr-only" htmlFor="loan-due-date">Due date (optional)</label>
+                <input id="loan-due-date" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
+                <label className="sr-only" htmlFor="loan-note">Note (optional)</label>
+                <input id="loan-note" value={note} onChange={e => setNote(e.target.value)} placeholder="Note (optional)" className="w-full py-2.5 px-3 bg-muted rounded-xl text-sm outline-none" />
               </div>
 
               <button onClick={handleSubmit} className="w-full mt-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm">

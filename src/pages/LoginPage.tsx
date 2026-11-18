@@ -78,7 +78,7 @@ export default function LoginPage() {
             <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-lg flex items-center justify-center mx-auto mb-6 shadow-2xl border border-white/20">
               <Wallet size={36} strokeWidth={2.2} className="text-white" />
             </div>
-            <h1 className="text-4xl font-extrabold mb-3 tracking-tight">PaysaPro</h1>
+            <div className="text-4xl font-extrabold mb-3 tracking-tight">PaysaPro</div>
             <p className="text-lg opacity-90 font-medium mb-2">আপনার আর্থিক ব্যবস্থাপনার সেরা সমাধান</p>
             <p className="text-sm opacity-60 mb-10">Premium Money Manager by Robi</p>
           </motion.div>
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
               <Wallet size={30} className="text-primary" strokeWidth={2.2} />
             </div>
-            <h1 className="text-2xl font-extrabold text-foreground">PaysaPro</h1>
+            <div className="text-2xl font-extrabold text-foreground">PaysaPro</div>
             <p className="text-xs text-muted-foreground mt-1">Premium Money Manager by Robi</p>
           </div>
 
@@ -154,9 +154,9 @@ export default function LoginPage() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <h2 className="text-xl font-bold mb-1">
+                <h1 className="text-xl font-bold mb-1">
                   {isLogin ? 'ফিরে আসার জন্য স্বাগতম!' : 'নতুন অ্যাকাউন্ট তৈরি করুন'}
-                </h2>
+                </h1>
                 <p className="text-muted-foreground text-sm mb-5">
                   {isLogin ? 'আপনার অ্যাকাউন্টে সাইন ইন করুন' : 'ফ্রি অ্যাকাউন্ট তৈরি করে শুরু করুন'}
                 </p>
@@ -186,6 +186,7 @@ export default function LoginPage() {
                     <div className="relative group">
                       <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <input
+                        aria-label="আপনার নাম"
                         value={name} onChange={e => setName(e.target.value)}
                         placeholder="আপনার নাম"
                         className="w-full pl-11 pr-4 py-3 bg-muted/60 rounded-xl outline-none font-medium focus:ring-2 focus:ring-primary/30 focus:bg-muted transition-all border border-transparent focus:border-primary/20"
@@ -195,6 +196,7 @@ export default function LoginPage() {
                   <div className="relative group">
                     <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <input
+                      aria-label="ইমেইল অ্যাড্রেস"
                       type="email" value={email} onChange={e => setEmail(e.target.value)}
                       placeholder="ইমেইল অ্যাড্রেস" required
                       className="w-full pl-11 pr-4 py-3 bg-muted/60 rounded-xl outline-none font-medium focus:ring-2 focus:ring-primary/30 focus:bg-muted transition-all border border-transparent focus:border-primary/20"
@@ -203,11 +205,12 @@ export default function LoginPage() {
                   <div className="relative group">
                     <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <input
+                      aria-label="পাসওয়ার্ড"
                       type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
                       placeholder="পাসওয়ার্ড" required minLength={6}
                       className="w-full pl-11 pr-11 py-3 bg-muted/60 rounded-xl outline-none font-medium focus:ring-2 focus:ring-primary/30 focus:bg-muted transition-all border border-transparent focus:border-primary/20"
                     />
-                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" aria-label={showPass ? 'পাসওয়ার্ড লুকান' : 'পাসওয়ার্ড দেখান'}>
                       {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>

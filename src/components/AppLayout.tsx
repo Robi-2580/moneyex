@@ -56,7 +56,7 @@ export default function AppLayout() {
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 h-16 border-b border-border shrink-0 ${isCollapsed ? 'justify-center px-2' : ''}`}>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md" style={{ background: 'var(--gradient-primary)' }}>P</div>
-        {!isCollapsed && <h1 className="text-base font-bold whitespace-nowrap gradient-text">PaysaPro</h1>}
+        {!isCollapsed && <div className="text-base font-bold whitespace-nowrap gradient-text">PaysaPro</div>}
       </div>
 
       {/* Nav */}
@@ -93,7 +93,7 @@ export default function AppLayout() {
                 <p className="text-sm font-semibold truncate">{displayName}</p>
                 <p className="text-xs text-muted-foreground truncate">{user?.email || 'Guest Mode'}</p>
               </div>
-              <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')}>
+              <button onClick={logout} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" title={t('logout')} aria-label={t('logout')}>
                 <LogOut size={16} />
               </button>
             </>
@@ -133,13 +133,14 @@ export default function AppLayout() {
         {/* Top Header */}
         <header className="h-14 border-b border-border bg-card/80 backdrop-blur-md flex items-center justify-between px-4 lg:px-6 shrink-0">
           <div className="flex items-center gap-2">
-            <button onClick={() => setMobileSidebar(true)} className="md:hidden p-2 rounded-xl hover:bg-muted">
+            <button onClick={() => setMobileSidebar(true)} className="md:hidden p-2 rounded-xl hover:bg-muted" aria-label={state.language === 'bn' ? 'সাইডবার খুলুন' : 'Open sidebar'}>
               <Menu size={20} />
             </button>
             <button
               onClick={() => setCollapsed(c => !c)}
               className="hidden md:flex p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
               title={collapsed ? 'Expand' : 'Collapse'}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
@@ -152,6 +153,7 @@ export default function AppLayout() {
               <input
                 value={searchQ}
                 onChange={(e) => setSearchQ(e.target.value)}
+                aria-label={state.language === 'bn' ? 'গ্লোবাল সার্চ' : 'Global search'}
                 placeholder={state.language === 'bn' ? 'গ্লোবাল সার্চ...' : 'Global search...'}
                 className="w-full pl-9 pr-3 py-2 text-sm bg-muted/60 rounded-xl outline-none border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/25 transition"
               />
@@ -177,6 +179,7 @@ export default function AppLayout() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => openQuickAdd()}
+              aria-label={t('addTransaction')}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-primary-foreground font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
               style={{ background: 'var(--gradient-primary)' }}
             >
@@ -186,6 +189,7 @@ export default function AppLayout() {
             <button
               onClick={() => dispatch({ type: 'TOGGLE_THEME' })}
               className="p-2.5 rounded-xl hover:bg-muted transition-colors"
+              aria-label={state.isDark ? (state.language === 'bn' ? 'লাইট থিম চালু করুন' : 'Switch to light theme') : (state.language === 'bn' ? 'ডার্ক থিম চালু করুন' : 'Switch to dark theme')}
             >
               {state.isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>

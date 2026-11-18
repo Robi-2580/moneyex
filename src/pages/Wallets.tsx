@@ -52,6 +52,7 @@ export default function Wallets() {
 
   return (
     <div className="py-4 space-y-5">
+      <h1 className="text-xl font-bold">Wallets</h1>
       {/* Total */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card-primary rounded-3xl p-5 text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -61,7 +62,7 @@ export default function Wallets() {
 
       {/* Wallet List */}
       <div className="flex items-center justify-between">
-        <h3 className="font-bold text-base">Wallets ({state.wallets.length})</h3>
+        <h2 className="font-bold text-base">Wallets ({state.wallets.length})</h2>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowForm(true)}
           className="flex items-center gap-1 text-sm font-semibold text-primary">
           <Plus size={16} /> Add
@@ -83,8 +84,8 @@ export default function Wallets() {
             </div>
             <p className="font-bold text-lg mr-2">{fmt(w.balance)}</p>
             <div className="flex gap-1">
-              <button onClick={() => openEdit(w)} className="p-2 rounded-xl hover:bg-muted"><Pencil size={16} /></button>
-              <button onClick={() => dispatch({ type: 'DELETE_WALLET', payload: w.id })} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive"><Trash2 size={16} /></button>
+              <button onClick={() => openEdit(w)} className="p-2 rounded-xl hover:bg-muted" aria-label={`Edit wallet ${w.name}`}><Pencil size={16} /></button>
+              <button onClick={() => dispatch({ type: 'DELETE_WALLET', payload: w.id })} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive" aria-label={`Delete wallet ${w.name}`}><Trash2 size={16} /></button>
             </div>
           </motion.div>
         ))}
@@ -97,19 +98,19 @@ export default function Wallets() {
             <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={resetForm} />
             <motion.div className="relative w-full max-w-lg bg-card rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl" initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}>
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold">{editing ? 'Edit' : 'Add'} Wallet</h2>
-                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted"><X size={20} /></button>
+                <h3 className="text-lg font-bold">{editing ? 'Edit' : 'Add'} Wallet</h3>
+                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted" aria-label="Close wallet form"><X size={20} /></button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Name</label>
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Bkash" className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium focus:ring-2 focus:ring-primary/30" />
+                  <label htmlFor="wallet-name" className="text-sm font-medium text-muted-foreground mb-1 block">Name</label>
+                  <input id="wallet-name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Bkash" className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium focus:ring-2 focus:ring-primary/30" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Type</label>
+                  <span className="text-sm font-medium text-muted-foreground mb-1 block">Type</span>
                   <div className="flex gap-2">
                     {walletTypes.map(tw => (
-                      <button key={tw.value} onClick={() => setType(tw.value)}
+                      <button key={tw.value} onClick={() => setType(tw.value)} aria-pressed={type === tw.value}
                         className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${type === tw.value ? 'bg-primary text-primary-foreground shadow' : 'bg-muted'}`}>
                         <CategoryIcon icon={tw.icon} size={16} /> {tw.label}
                       </button>
@@ -118,15 +119,15 @@ export default function Wallets() {
                 </div>
                 {!editing && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground mb-1 block">Initial Balance</label>
-                    <input type="number" value={balance} onChange={e => setBalance(e.target.value)} placeholder="0" className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium focus:ring-2 focus:ring-primary/30" />
+                    <label htmlFor="wallet-balance" className="text-sm font-medium text-muted-foreground mb-1 block">Initial Balance</label>
+                    <input id="wallet-balance" type="number" value={balance} onChange={e => setBalance(e.target.value)} placeholder="0" className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium focus:ring-2 focus:ring-primary/30" />
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Color</label>
+                  <span className="text-sm font-medium text-muted-foreground mb-1 block">Color</span>
                   <div className="flex gap-2">
                     {walletColors.map(c => (
-                      <button key={c} onClick={() => setColor(c)}
+                      <button key={c} onClick={() => setColor(c)} aria-label={`Select color ${c}`} aria-pressed={color === c}
                         className={`w-9 h-9 rounded-full transition-transform ${color === c ? 'ring-2 ring-primary ring-offset-2 ring-offset-card scale-110' : ''}`}
                         style={{ backgroundColor: c }} />
                     ))}

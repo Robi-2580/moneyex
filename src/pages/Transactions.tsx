@@ -52,12 +52,12 @@ export default function Transactions() {
 
   return (
     <div className="py-4 space-y-4">
-      <h2 className="text-xl font-bold">Transactions</h2>
+      <h1 className="text-xl font-bold">Transactions</h1>
 
       {/* Search */}
       <div className="relative">
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search transactions..."
+        <input aria-label="Search transactions" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search transactions..."
           className="w-full pl-11 pr-4 py-3 bg-card rounded-2xl outline-none font-medium border border-border focus:ring-2 focus:ring-primary/30" />
       </div>
 

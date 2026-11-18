@@ -56,7 +56,7 @@ export default function Budgets() {
   return (
     <div className="py-4 space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Budgets</h2>
+        <h1 className="text-xl font-bold">Budgets</h1>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowForm(true)}
           className="flex items-center gap-1 text-sm font-semibold text-primary">
           <Plus size={16} /> Add Budget
@@ -95,8 +95,8 @@ export default function Budgets() {
                   </div>
                   <div className="flex items-center gap-1">
                     {isOver && <AlertTriangle size={16} className="text-warning" />}
-                    <button onClick={() => openEdit(b)} className="p-1.5 rounded-lg hover:bg-muted"><Pencil size={14} /></button>
-                    <button onClick={() => dispatch({ type: 'DELETE_BUDGET', payload: b.id })} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive"><Trash2 size={14} /></button>
+                    <button onClick={() => openEdit(b)} className="p-1.5 rounded-lg hover:bg-muted" aria-label={`Edit ${cat?.name || 'overall'} budget`}><Pencil size={14} /></button>
+                    <button onClick={() => dispatch({ type: 'DELETE_BUDGET', payload: b.id })} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive" aria-label={`Delete ${cat?.name || 'overall'} budget`}><Trash2 size={14} /></button>
                   </div>
                 </div>
                 <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden">
@@ -124,18 +124,18 @@ export default function Budgets() {
             <motion.div className="relative w-full max-w-lg bg-card rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl" initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}>
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-bold">{editing ? 'Edit' : 'Set'} Budget</h2>
-                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted"><X size={20} /></button>
+                <button onClick={resetForm} className="p-2 rounded-xl hover:bg-muted" aria-label="Close budget form"><X size={20} /></button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Category (leave empty for overall)</label>
+                  <span className="text-sm font-medium text-muted-foreground mb-2 block">Category (leave empty for overall)</span>
                   <div className="grid grid-cols-4 gap-2">
-                    <button onClick={() => setCategoryId('')}
+                    <button onClick={() => setCategoryId('')} aria-pressed={!categoryId}
                       className={`flex flex-col items-center gap-1 p-2 rounded-2xl text-xs transition-all ${!categoryId ? 'bg-primary/10 ring-2 ring-primary' : 'bg-muted'}`}>
                       <WalletIcon size={20} className="text-foreground" /><span className="font-medium">Overall</span>
                     </button>
                     {expenseCategories.map(cat => (
-                      <button key={cat.id} onClick={() => setCategoryId(cat.id)}
+                      <button key={cat.id} onClick={() => setCategoryId(cat.id)} aria-pressed={categoryId === cat.id}
                         className={`flex flex-col items-center gap-1 p-2 rounded-2xl text-xs transition-all ${categoryId === cat.id ? 'bg-primary/10 ring-2 ring-primary' : 'bg-muted'}`}>
                         <span style={{ color: cat.color }}><CategoryIcon icon={cat.icon} size={20} /></span>
                         <span className="font-medium truncate w-full text-center">{cat.name}</span>
@@ -144,8 +144,8 @@ export default function Budgets() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Budget Amount</label>
-                  <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0"
+                  <label htmlFor="budget-amount" className="text-sm font-medium text-muted-foreground mb-1 block">Budget Amount</label>
+                  <input id="budget-amount" type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0"
                     className="w-full py-3 px-4 bg-muted rounded-2xl outline-none font-medium text-xl focus:ring-2 focus:ring-primary/30" />
                 </div>
                 <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}

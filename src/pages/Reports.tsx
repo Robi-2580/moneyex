@@ -66,7 +66,7 @@ export default function Reports() {
 
   return (
     <div className="py-4 space-y-5">
-      <h2 className="text-xl font-bold">Reports</h2>
+      <h1 className="text-xl font-bold">Reports</h1>
 
       {/* Period filter */}
       <div className="flex gap-2 p-1 bg-muted rounded-2xl">

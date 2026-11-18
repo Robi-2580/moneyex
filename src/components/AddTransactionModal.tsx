@@ -85,7 +85,7 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold">{editTransaction ? 'Edit' : 'Add'} Transaction</h2>
-              <button onClick={resetAndClose} className="p-2 rounded-xl hover:bg-muted">
+              <button onClick={resetAndClose} className="p-2 rounded-xl hover:bg-muted" aria-label="Close transaction form">
                 <X size={20} />
               </button>
             </div>
@@ -111,9 +111,10 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
 
             {/* Amount */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-muted-foreground mb-1 block">Amount</label>
+              <label htmlFor="transaction-amount" className="text-sm font-medium text-muted-foreground mb-1 block">Amount</label>
               <div className="relative">
                 <input
+                  id="transaction-amount"
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
@@ -125,12 +126,13 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
 
             {/* Category */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">Category</label>
+              <span className="text-sm font-medium text-muted-foreground mb-2 block">Category</span>
               <div className="grid grid-cols-4 gap-2">
                 {filteredCategories.map(cat => (
                   <button
                     key={cat.id}
                     onClick={() => setCategoryId(cat.id)}
+                    aria-pressed={categoryId === cat.id}
                     className={`flex flex-col items-center gap-1 p-2.5 rounded-2xl text-xs transition-all ${
                       categoryId === cat.id
                         ? 'bg-primary/10 ring-2 ring-primary shadow-sm'
@@ -146,9 +148,10 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
 
             {/* Wallet */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-muted-foreground mb-1 block">Wallet</label>
+              <label htmlFor="transaction-wallet" className="text-sm font-medium text-muted-foreground mb-1 block">Wallet</label>
               <div className="relative">
                 <select
+                  id="transaction-wallet"
                   value={walletId}
                   onChange={e => setWalletId(e.target.value)}
                   className="w-full py-3 px-4 bg-muted rounded-2xl outline-none appearance-none font-medium focus:ring-2 focus:ring-primary/30"
@@ -163,8 +166,9 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
 
             {/* Date */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-muted-foreground mb-1 block">Date</label>
+              <label htmlFor="transaction-date" className="text-sm font-medium text-muted-foreground mb-1 block">Date</label>
               <input
+                id="transaction-date"
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
@@ -174,8 +178,9 @@ export function AddTransactionModal({ open, onClose, editTransaction, prefilledC
 
             {/* Note */}
             <div className="mb-6">
-              <label className="text-sm font-medium text-muted-foreground mb-1 block">Note (optional)</label>
+              <label htmlFor="transaction-note" className="text-sm font-medium text-muted-foreground mb-1 block">Note (optional)</label>
               <input
+                id="transaction-note"
                 type="text"
                 value={note}
                 onChange={e => setNote(e.target.value)}
